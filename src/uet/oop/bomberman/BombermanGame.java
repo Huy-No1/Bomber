@@ -26,7 +26,7 @@ import java.util.Scanner;
 public class BombermanGame extends Application {
 
     public static final int WIDTH = 31;
-    public static final int HEIGHT = 14;
+    public static final int HEIGHT = 13;
 
     private GraphicsContext gc;
     private GraphicsContext gcentity;
@@ -35,6 +35,8 @@ public class BombermanGame extends Application {
     private List<Entity> entities = new ArrayList<>();
     private List<Entity> stillObjects = new ArrayList<>();
     public static String[] map;
+    public static KeyInput keyInput = new KeyInput();
+    public static Scene scene;
 
     public static void main(String[] args) {
         Application.launch(BombermanGame.class);
@@ -53,7 +55,7 @@ public class BombermanGame extends Application {
         root.getChildren().add(canvas);
         root.getChildren().add(canvasentity);
         // Tao scene
-        Scene scene = new Scene(root);
+        scene = new Scene(root);
 
         // Them scene vao stage
         stage.setScene(scene);
@@ -63,37 +65,38 @@ public class BombermanGame extends Application {
         map = createMap();
         render();
 
+        Entity bomberman = new Bomber(1, 1, Sprite.player_right.getFxImage());
+
+
+        entities.add(bomberman);
         //loop
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long l) {
+
                 update();
             }
         };
         timer.start();
 
-
-        Button button = new Button("dsa");
-
-        Entity bomberman = new Bomber(1, 1, Sprite.player_right.getFxImage());
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 switch (keyEvent.getCode()) {
                     case LEFT: {
-                        bomberman.moveLeft();
+                        keyInput.left = true;
                         break;
                     }
                     case RIGHT: {
-                        bomberman.moveRight();
+                        keyInput.right = true;
                         break;
                     }
                     case UP: {
-                        bomberman.moveUp();
+                        keyInput.up = true;
                         break;
                     }
                     case DOWN: {
-                        bomberman.moveDown();
+                        keyInput.down = true;
                         break;
                     }
                     case SPACE: {
@@ -105,9 +108,37 @@ public class BombermanGame extends Application {
                 }
             }
         });
+        scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                switch (keyEvent.getCode()) {
+                    case LEFT: {
+                        keyInput.left = false;
+                        break;
+                    }
+                    case RIGHT: {
+                        keyInput.right = false;
+                        break;
+                    }
+                    case UP: {
+                        keyInput.up = false;
+                        break;
+                    }
+                    case DOWN: {
+                        keyInput.down = false;
+                        break;
+                    }
+                    case SPACE: {
+                        Entity bom = new Bomb((int) Math.round(bomberman.getX()), (int) Math.round(bomberman.getY()), Sprite.bomb.getFxImage());
+                        bom.render(gc);
+                        //bomberman.render(gcentity);
 
-                entities.add(bomberman);
+                    }
+                }
+            }
+        });
     }
+
 
     public String[] createMap() {
         try {
@@ -116,8 +147,8 @@ public class BombermanGame extends Application {
             row = scf.nextInt();
             String[] map = new String[row];
             int col = scf.nextInt();
-            String s= scf.nextLine();
-            for (int i = 0; i < row ; i++) {
+            String s = scf.nextLine();
+            for (int i = 0; i < row; i++) {
                 map[i] = scf.nextLine();
                 for (int j = 0; j < map[i].length(); j++) {
                     Entity object = new Grass(j, i, Sprite.grass.getFxImage());
@@ -159,7 +190,7 @@ public class BombermanGame extends Application {
     }
 
     public void update() {
-        //entities.forEach(Entity::update);
+        entities.forEach(Entity::update);
         gcentity.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         entities.forEach(g -> g.render(gcentity));
     }
