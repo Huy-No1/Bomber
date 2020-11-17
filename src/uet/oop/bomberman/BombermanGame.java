@@ -7,17 +7,18 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.entities.Enemy.Ballon;
 import uet.oop.bomberman.entities.Enemy.Enemy;
+import uet.oop.bomberman.entities.Enemy.Oneal;
+import uet.oop.bomberman.entities.StillObject.Brick;
+import uet.oop.bomberman.entities.StillObject.Grass;
+import uet.oop.bomberman.entities.StillObject.Wall;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,8 @@ public class BombermanGame extends Application {
     public static String[] map;
     public static KeyInput keyInput = new KeyInput();
     public static Scene scene;
+    public static Entity bomberman = new Bomber(1, 1, Sprite.player_right.getFxImage());
+    public static boolean live = true;
 
     public static void main(String[] args) {
         Application.launch(BombermanGame.class);
@@ -54,6 +57,7 @@ public class BombermanGame extends Application {
         Group root = new Group();
         root.getChildren().add(canvas);
         root.getChildren().add(canvasentity);
+
         // Tao scene
         scene = new Scene(root);
 
@@ -65,20 +69,19 @@ public class BombermanGame extends Application {
         map = createMap();
         render();
 
-        Entity bomberman = new Bomber(1, 1, Sprite.player_right.getFxImage());
-
 
         entities.add(bomberman);
         //loop
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long l) {
-
                 update();
+                Bomber.live = collision();
+
             }
         };
         timer.start();
-
+        // nhan key tu ban phim
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
@@ -139,7 +142,22 @@ public class BombermanGame extends Application {
         });
     }
 
+    //check va cham quai
+    public boolean collision() {
 
+
+        for (Entity x : entities) {
+            //System.out.println(x.rtg);
+            if (x instanceof Enemy) {
+                if (bomberman.rtg.intersects(x.rtg.getLayoutBounds())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    //ham khoi tao map
     public String[] createMap() {
         try {
             Scanner scf = new Scanner(new BufferedReader(new FileReader("res/levels/Level1.txt")));
@@ -170,7 +188,7 @@ public class BombermanGame extends Application {
                         }
                         case '2': {
                             stillObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
-                            Entity enemy = new Ballon(j, i, Sprite.oneal_left1.getFxImage());
+                            Entity enemy = new Oneal(j, i, Sprite.oneal_left1.getFxImage());
                             entities.add(enemy);
                             break;
                         }

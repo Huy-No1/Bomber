@@ -5,13 +5,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.graphics.Sprite;
 
 public abstract class Entity {
     protected double x;
     protected double y;
     protected Image img;
-
+    public Rectangle rtg;
     public Entity(double x, double y, Image img) {
         this.x = x;
         this.y = y;
