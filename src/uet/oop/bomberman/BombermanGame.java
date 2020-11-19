@@ -2,28 +2,39 @@ package uet.oop.bomberman;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import uet.oop.bomberman.entities.*;
-import uet.oop.bomberman.entities.Enemy.Ballon;
+import uet.oop.bomberman.entities.Bomberman.Bomb;
+import uet.oop.bomberman.entities.Bomberman.Bomber;
+import uet.oop.bomberman.entities.Enemy.Balloon;
 import uet.oop.bomberman.entities.Enemy.Enemy;
 import uet.oop.bomberman.entities.Enemy.Oneal;
-import uet.oop.bomberman.entities.StillObject.Brick;
-import uet.oop.bomberman.entities.StillObject.Grass;
-import uet.oop.bomberman.entities.StillObject.Wall;
+import uet.oop.bomberman.entities.NeutralObject.Brick;
+import uet.oop.bomberman.entities.NeutralObject.Flame;
+import uet.oop.bomberman.entities.NeutralObject.Grass;
+import uet.oop.bomberman.entities.NeutralObject.Wall;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Scanner;
-
+/*
+    0. Tao canvas
+    1. Khoi tao map:
+        - Them cac entities (enemies)
+        - Them cac stillObjects (tinh vat, quang canh bleh bleh)
+        - render map truoc (stillObject objects)
+        - Them bomberman vao entities.
+    2. Loop game
+        -
+ */
 public class BombermanGame extends Application {
 
     public static final int WIDTH = 31;
@@ -35,6 +46,8 @@ public class BombermanGame extends Application {
     private Canvas canvasentity;
     private List<Entity> entities = new ArrayList<>();
     private List<Entity> stillObjects = new ArrayList<>();
+    private List<Entity> damagedEntities = new ArrayList<>();
+
     public static String[] map;
     public static KeyInput keyInput = new KeyInput();
     public static Scene scene;
@@ -76,96 +89,93 @@ public class BombermanGame extends Application {
             @Override
             public void handle(long l) {
                 update();
-                Bomber.live = collision();
-
+                if (bomberman instanceof Bomber) {
+                    Bomber bomber = (Bomber) bomberman;
+                    if (bomber.collision(entities)) {
+                        bomber.setLive(false);
+                    }
+                }
             }
         };
         timer.start();
         // nhan key tu ban phim
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                switch (keyEvent.getCode()) {
-                    case LEFT: {
-                        keyInput.left = true;
-                        break;
-                    }
-                    case RIGHT: {
-                        keyInput.right = true;
-                        break;
-                    }
-                    case UP: {
-                        keyInput.up = true;
-                        break;
-                    }
-                    case DOWN: {
-                        keyInput.down = true;
-                        break;
-                    }
-                    case SPACE: {
-                        Entity bom = new Bomb((int) Math.round(bomberman.getX()), (int) Math.round(bomberman.getY()), Sprite.bomb.getFxImage());
-                        bom.render(gc);
-                        //bomberman.render(gcentity);
+        scene.setOnKeyPressed(keyEvent -> {
+            switch (keyEvent.getCode()) {
+                case LEFT: {
+                    keyInput.left = true;
+                    break;
+                }
+                case RIGHT: {
+                    keyInput.right = true;
+                    break;
+                }
+                case UP: {
+                    keyInput.up = true;
+                    break;
+                }
+                case DOWN: {
+                    keyInput.down = true;
+                    break;
+                }
+                case SPACE: {
 
+                }
+                default: {}
+            }
+        });
+        scene.setOnKeyReleased(keyEvent -> {
+            switch (keyEvent.getCode()) {
+                case LEFT: {
+                    keyInput.left = false;
+                    break;
+                }
+                case RIGHT: {
+                    keyInput.right = false;
+                    break;
+                }
+                case UP: {
+                    keyInput.up = false;
+                    break;
+                }
+                case DOWN: {
+                    keyInput.down = false;
+                    break;
+                }
+                case SPACE: {
+                    if (bomberman instanceof Bomber) {
+                        Bomber bomber = (Bomber) bomberman;
+                        if (bomber.bombCounter() < bomber.bombLimit) {
+                            Entity bomb = bomber.placeBomb();
+                            entities.add(bomb);
+
+                            if (bomb instanceof Bomb) {
+                                Bomb newbomb = (Bomb) bomb;
+                                Entity flame = newbomb.getRightFlame();
+                                entities.add(flame);
+                            }
+                            // System.out.println(bomb instanceof Bomb);
+
+                        }
                     }
+                    break;
                 }
             }
         });
-        scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                switch (keyEvent.getCode()) {
-                    case LEFT: {
-                        keyInput.left = false;
-                        break;
-                    }
-                    case RIGHT: {
-                        keyInput.right = false;
-                        break;
-                    }
-                    case UP: {
-                        keyInput.up = false;
-                        break;
-                    }
-                    case DOWN: {
-                        keyInput.down = false;
-                        break;
-                    }
-                    case SPACE: {
-                        Entity bom = new Bomb((int) Math.round(bomberman.getX()), (int) Math.round(bomberman.getY()), Sprite.bomb.getFxImage());
-                        bom.render(gc);
-                        //bomberman.render(gcentity);
-
-                    }
-                }
-            }
-        });
-    }
-
-    //check va cham quai
-    public boolean collision() {
-
-
-        for (Entity x : entities) {
-            //System.out.println(x.rtg);
-            if (x instanceof Enemy) {
-                if (bomberman.rtg.intersects(x.rtg.getLayoutBounds())) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     //ham khoi tao map
     public String[] createMap() {
         try {
             Scanner scf = new Scanner(new BufferedReader(new FileReader("res/levels/Level1.txt")));
+
+            int level = scf.nextInt();
             int row = scf.nextInt();
-            row = scf.nextInt();
+
             String[] map = new String[row];
             int col = scf.nextInt();
             String s = scf.nextLine();
+
+            // Xu ly thong tin trong file
             for (int i = 0; i < row; i++) {
                 map[i] = scf.nextLine();
                 for (int j = 0; j < map[i].length(); j++) {
@@ -178,11 +188,12 @@ public class BombermanGame extends Application {
                         }
                         case '*': {
                             object = new Brick(j, i, Sprite.brick.getFxImage());
+                            // System.out.println("(" + i + ", " + j + ")");
                             break;
                         }
                         case '1': {
                             stillObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
-                            Enemy enemy = new Ballon(j, i, Sprite.balloom_left1.getFxImage());
+                            Enemy enemy = new Balloon(j, i, Sprite.balloom_left1.getFxImage());
                             entities.add(enemy);
                             break;
                         }
@@ -196,7 +207,6 @@ public class BombermanGame extends Application {
                             object = new Grass(j, i, Sprite.grass.getFxImage());
                         }
                     }
-
                     stillObjects.add(object);
                 }
             }
@@ -208,13 +218,66 @@ public class BombermanGame extends Application {
     }
 
     public void update() {
+        try {
+            entities.forEach(o -> {
+                getTheExplosionDoneAndCheckForDamagedEntities(o);
+                damagedEntities.forEach(br -> damagingObjectsImg(br));
+
+            });
+        } catch (ConcurrentModificationException e) {
+            // System.out.println("were no errors to happen");
+        }
+
         entities.forEach(Entity::update);
         gcentity.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         entities.forEach(g -> g.render(gcentity));
+
     }
 
     public void render() {
         stillObjects.forEach(g -> g.render(gc));
+    }
+
+    public void damagingObjectsImg(Entity br) {
+        if (br instanceof Brick) {
+            if(((Brick) br).isDone()) {
+
+                // replace the tile with the grass
+                damagedEntities.remove(br);
+                stillObjects.remove(br);
+                Entity grass = new Grass((int) br.getX(), (int) br.getY(), Sprite.grass.getFxImage());
+                stillObjects.add(grass);
+                grass.render(gc);
+
+                // enable bomberman to go through the tile
+                String newMap = map[(int) br.getY()];
+                map[(int) br.getY()] = newMap.substring(0, (int) br.getX()) + " " +
+                        newMap.substring((int) br.getX() + 1);
+
+            } else {
+                // exploding animation of bricks
+                br.update();
+                br.render(gc);
+            }
+        }
+    }
+
+    public void getTheExplosionDoneAndCheckForDamagedEntities(Entity o) {
+        // remove bomb from the entites
+        if (o instanceof Bomb) {
+            if (((Bomb) o).isDone()) {
+                // check if the bomb damange any objects
+                ((Bomb) o).flameCollision(stillObjects, damagedEntities);
+                entities.remove(o);
+            }
+        }
+
+        // after the explosion is done, check if the it damage objects
+        if (o instanceof Flame) {
+            if (((Flame) o).isDone()) {
+                entities.remove(o);
+            }
+        }
     }
 
 

@@ -227,14 +227,44 @@ public class Sprite {
     }
 
     public static Sprite dieSprite(Sprite normal, Sprite x1, Sprite x2, int animate) {
-        if (animate < 10) {
+        if (animate < 30) {
             return normal;
-        } else if (animate < 20) {
+        } else if (animate < 60) {
             return x1;
         } else {
             return x2;
         }
     }
+    public static Sprite bombTickingSprite(Sprite normal, Sprite x1, Sprite x2, int animate) {
+        if (animate < 15) {
+            return x2;
+        } else if (animate < 30) {
+            return x1;
+        } else if (animate < 45) {
+            return normal;
+        } else if (animate < 60){
+            return x2;
+        } else if (animate < 75) {
+            return x1;
+        } else {
+            return normal;
+        }
+    }
+
+    public static Sprite bombExplodeSprite(Sprite normal, Sprite x1, Sprite x2, int animate) {
+        if (animate < 10) {
+            return normal;
+        } else if (animate < 20) {
+            return x1;
+        } else if (animate < 30) {
+            return x2;
+        } else if (animate < 40) {
+            return x1;
+        } else {
+            return normal;
+        }
+    }
+
     public static Sprite movingSprite(Sprite x1, Sprite x2, int animate, int time) {
         int diff = time / 2;
         return (animate % time > diff) ? x1 : x2;

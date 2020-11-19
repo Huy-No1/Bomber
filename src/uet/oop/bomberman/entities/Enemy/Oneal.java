@@ -9,6 +9,6 @@ public class Oneal extends Enemy{
         speed= 1;
         life= 1;
         throughWall= false;
-        rtg = new Rectangle(x, y, 1, 1);
+        // rtg = new Rectangle(x, y, 1, 1);
     }
 }

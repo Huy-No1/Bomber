@@ -1,4 +1,4 @@
-package uet.oop.bomberman.entities.StillObject;
+package uet.oop.bomberman.entities.NeutralObject;
 
 import javafx.scene.image.Image;
 import uet.oop.bomberman.entities.Entity;

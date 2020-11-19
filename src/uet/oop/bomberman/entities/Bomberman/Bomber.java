@@ -1,29 +1,50 @@
-package uet.oop.bomberman.entities;
+package uet.oop.bomberman.entities.Bomberman;
 
-import javafx.scene.SnapshotParameters;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.BombermanGame;
+import uet.oop.bomberman.entities.CurrentImage;
+import uet.oop.bomberman.entities.Enemy.Enemy;
+import uet.oop.bomberman.entities.Entity;
+import uet.oop.bomberman.entities.KeyInput;
 import uet.oop.bomberman.graphics.Sprite;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Bomber extends Entity {
-    public static boolean live = true;
-    private CurrentImage currentImage = new CurrentImage();
+
+    // ability
+    public List<Bomb> bombList = new ArrayList<Bomb>();
+    private int bombRange = 1;
+    public int bombLimit = 3;
     private double speed = 0.08;
+    private int deathCountDown = 30;
+    private boolean live = true;
+
+    /*
+    For rendering
+     */
+    private CurrentImage currentImage = new CurrentImage();
     private KeyInput keyInput = BombermanGame.keyInput;
-    private int death = 0;
+
 
     public Bomber(double x, double y, Image img) {
         super(x, y, img);
         rtg = new Rectangle(x, y, 0.6875, 1);
     }
 
-    public void setLocation(double x_, double y_) {
-        rtg.setX(x_);
-        rtg.setY(y_);
+    public void setLive(boolean live) {
+        this.live = live;
+    }
+
+    public boolean isLive() {
+        return live;
+    }
+
+    public void setLocation(double x, double y) {
+        rtg.setX(x);
+        rtg.setY(y);
     }
 
     public static int round(double x) {
@@ -34,8 +55,13 @@ public class Bomber extends Entity {
 
     }
 
+    /*
+    MOVEMENTS AND BOMB PLACING.
+     */
     public void moveLeft() {
-        img = Sprite.movingSprite(Sprite.player_left, Sprite.player_left_1, Sprite.player_left_2, currentImage.left).getFxImage();
+        img = Sprite
+                .movingSprite(Sprite.player_left, Sprite.player_left_1, Sprite.player_left_2, currentImage.left)
+                .getFxImage();
         if (currentImage.left == 8) {
             currentImage.left = 0;
         } else {
@@ -61,7 +87,9 @@ public class Bomber extends Entity {
     }
 
     public void moveRight() {
-        img = Sprite.movingSprite(Sprite.player_right, Sprite.player_right_1, Sprite.player_right_2, currentImage.right).getFxImage();
+        img = Sprite
+                .movingSprite(Sprite.player_right, Sprite.player_right_1, Sprite.player_right_2, currentImage.right)
+                .getFxImage();
         if (currentImage.right == 8) {
             currentImage.right = 0;
         } else {
@@ -87,7 +115,9 @@ public class Bomber extends Entity {
     }
 
     public void moveUp() {
-        img = Sprite.movingSprite(Sprite.player_up, Sprite.player_up_1, Sprite.player_up_2, currentImage.up).getFxImage();
+        img = Sprite
+                .movingSprite(Sprite.player_up, Sprite.player_up_1, Sprite.player_up_2, currentImage.up)
+                .getFxImage();
         if (currentImage.up == 8) {
             currentImage.up = 0;
         } else {
@@ -115,7 +145,9 @@ public class Bomber extends Entity {
     }
 
     public void moveDown() {
-        img = Sprite.movingSprite(Sprite.player_down, Sprite.player_down_1, Sprite.player_down_2, currentImage.down).getFxImage();
+        img = Sprite
+                .movingSprite(Sprite.player_down, Sprite.player_down_1, Sprite.player_down_2, currentImage.down)
+                .getFxImage();
         if (currentImage.down == 8) {
             currentImage.down = 0;
         } else {
@@ -138,16 +170,28 @@ public class Bomber extends Entity {
                 setLocation(x, y);
                 return;
             }
-
         }
     }
 
+    public Entity placeBomb() {
+        Entity bom = new Bomb((int) Math.round(this.getX()), (int) Math.round(this.getY()),
+                Sprite.bomb.getFxImage());
+        this.bombList.add((Bomb) bom);
+        return bom;
+    }
+
+    public int bombCounter() {
+        return bombList.size();
+    }
+
     public void dieImg() {
-        if (death == 30) {
+        if (deathCountDown == 0) {
             this.img = null;
         } else {
-            this.img = Sprite.dieSprite(Sprite.player_dead1, Sprite.player_dead2, Sprite.player_dead3, death).getFxImage();
-            death++;
+            this.img = Sprite
+                    .dieSprite(Sprite.player_dead1, Sprite.player_dead2, Sprite.player_dead3, deathCountDown)
+                    .getFxImage();
+            deathCountDown--;
         }
     }
 
@@ -158,8 +202,25 @@ public class Bomber extends Entity {
             if (keyInput.right && !keyInput.up && !keyInput.down) moveRight();
             if (keyInput.up && !keyInput.right && !keyInput.left) moveUp();
             if (keyInput.down && !keyInput.right && !keyInput.left) moveDown();
+            if (!bombList.isEmpty()) {
+                if (bombList.get(bombList.size() - 1).isExploded()) {
+                    bombList.remove(bombList.size() - 1);
+                }
+            }
         } else {
                 dieImg();
         }
+    }
+
+    public boolean collision(List<Entity> entities) {
+        for (Entity x : entities) {
+            //System.out.println(x.rtg);
+            if (x instanceof Enemy) {
+                if (this.rtg.intersects(x.rtg.getLayoutBounds())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
