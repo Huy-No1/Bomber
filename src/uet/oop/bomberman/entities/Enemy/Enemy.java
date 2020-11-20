@@ -9,6 +9,8 @@ import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.entities.Entity;
 
 public abstract class Enemy extends Entity {
+
+    protected boolean damaged = false;
     protected double speed = 10;
     protected int life = 1;
     protected boolean throughWall = false;
@@ -16,8 +18,16 @@ public abstract class Enemy extends Entity {
     public Enemy(int x, int y, Image img) {
         super(x, y, img);
         rtg = new Rectangle(x, y, 0.98, 0.98);
+        damaged = false;
     }
 
+    public void setDamaged(boolean damaged) {
+        this.damaged = damaged;
+    }
+
+    public boolean isDamaged() {
+        return damaged;
+    }
 
     @Override
     public void update() {

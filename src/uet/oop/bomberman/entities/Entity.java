@@ -25,8 +25,9 @@ public abstract class Entity {
 
         ImageView iv = new ImageView(img);
         Image base = iv.snapshot(params, null);
-
-        gc.drawImage(base, x * Sprite.SCALED_SIZE, y * Sprite.SCALED_SIZE);
+        if (this.x >= 0 && this.y >= 0) {
+            gc.drawImage(base, x * Sprite.SCALED_SIZE, y * Sprite.SCALED_SIZE);
+        }
     }
 
     public void moveLeft() {

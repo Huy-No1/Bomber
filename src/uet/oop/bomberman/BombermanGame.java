@@ -89,14 +89,9 @@ public class BombermanGame extends Application {
             @Override
             public void handle(long l) {
                 update();
-                if (bomberman instanceof Bomber) {
-                    Bomber bomber = (Bomber) bomberman;
-                    if (bomber.collision(entities)) {
-                        bomber.setLive(false);
-                    }
-                }
             }
         };
+
         timer.start();
         // nhan key tu ban phim
         scene.setOnKeyPressed(keyEvent -> {
@@ -150,8 +145,8 @@ public class BombermanGame extends Application {
 
                             if (bomb instanceof Bomb) {
                                 Bomb newbomb = (Bomb) bomb;
-                                Entity flame = newbomb.getRightFlame();
-                                entities.add(flame);
+                                List<Entity> flames = newbomb.getFlames();
+                                entities.addAll(flames);
                             }
                             // System.out.println(bomb instanceof Bomb);
 
@@ -222,12 +217,24 @@ public class BombermanGame extends Application {
             entities.forEach(o -> {
                 getTheExplosionDoneAndCheckForDamagedEntities(o);
                 damagedEntities.forEach(br -> damagingObjectsImg(br));
-
             });
+
         } catch (ConcurrentModificationException e) {
             // System.out.println("were no errors to happen");
         }
 
+        // bomberman collides enemies
+        if (bomberman instanceof Bomber) {
+            Bomber bomber = (Bomber) bomberman;
+            if (bomber.collision(entities)) {
+                bomber.setLive(false);
+            }
+//            if (!bomber.isLive() && bomber.getDeathCountDown() == 0) {
+//                bomber.setLive(true);
+//                bomber.setDeathCountDown(30);
+//                bomber.setLocation(1, 1);
+//            }
+        }
         entities.forEach(Entity::update);
         gcentity.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         entities.forEach(g -> g.render(gcentity));
@@ -267,7 +274,7 @@ public class BombermanGame extends Application {
         if (o instanceof Bomb) {
             if (((Bomb) o).isDone()) {
                 // check if the bomb damange any objects
-                ((Bomb) o).flameCollision(stillObjects, damagedEntities);
+                ((Bomb) o).flameCollision(stillObjects, bomberman, damagedEntities);
                 entities.remove(o);
             }
         }
@@ -279,6 +286,8 @@ public class BombermanGame extends Application {
             }
         }
     }
+
+
 
 
 }

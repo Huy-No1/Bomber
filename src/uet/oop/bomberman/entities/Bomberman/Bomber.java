@@ -42,6 +42,14 @@ public class Bomber extends Entity {
         return live;
     }
 
+    public void setDeathCountDown(int deathCountDown) {
+        this.deathCountDown = deathCountDown;
+    }
+
+    public int getDeathCountDown() {
+        return deathCountDown;
+    }
+
     public void setLocation(double x, double y) {
         rtg.setX(x);
         rtg.setY(y);
@@ -175,7 +183,7 @@ public class Bomber extends Entity {
 
     public Entity placeBomb() {
         Entity bom = new Bomb((int) Math.round(this.getX()), (int) Math.round(this.getY()),
-                Sprite.bomb.getFxImage());
+                Sprite.bomb.getFxImage(), this.bombRange);
         this.bombList.add((Bomb) bom);
         return bom;
     }
