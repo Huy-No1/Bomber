@@ -17,7 +17,7 @@ public class Bomber extends Entity {
     // ability
     public List<Bomb> bombList = new ArrayList<Bomb>();
     private int bombRange = 1;
-    public int bombLimit = 3;
+    public int bombLimit = 9;
     private double speed = 0.08;
     private int deathCountDown = 30;
     private boolean live = true;
@@ -222,7 +222,6 @@ public class Bomber extends Entity {
 
     public boolean collision(List<Entity> entities) {
         for (Entity x : entities) {
-            //System.out.println(x.rtg);
             if (x instanceof Enemy) {
                 if (this.rtg.intersects(x.rtg.getLayoutBounds())) {
                     return true;

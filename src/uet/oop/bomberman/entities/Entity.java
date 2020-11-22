@@ -13,20 +13,24 @@ public abstract class Entity {
     protected double y;
     protected Image img;
     public Rectangle rtg;
+
     public Entity(double x, double y, Image img) {
         this.x = x;
         this.y = y;
         this.img = img;
     }
 
-    public void render(GraphicsContext gc) {
-        SnapshotParameters params = new SnapshotParameters();
-        params.setFill(Color.TRANSPARENT);
+    public Image getImg() {
+        return img;
+    }
 
-        ImageView iv = new ImageView(img);
-        Image base = iv.snapshot(params, null);
+    public void setImg(Image img) {
+        this.img = img;
+    }
+
+    public void render(GraphicsContext gc) {
         if (this.x >= 0 && this.y >= 0) {
-            gc.drawImage(base, x * Sprite.SCALED_SIZE, y * Sprite.SCALED_SIZE);
+            gc.drawImage(img, x * Sprite.SCALED_SIZE, y * Sprite.SCALED_SIZE);
         }
     }
 

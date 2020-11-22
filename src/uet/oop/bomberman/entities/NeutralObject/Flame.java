@@ -7,7 +7,7 @@ import uet.oop.bomberman.graphics.Sprite;
 
 public class Flame extends Entity {
 
-    private int explosionCountDown = 140;
+    private int explosionCountDown = 120;
     private String pos;
     private boolean done = false;
 
@@ -38,27 +38,12 @@ public class Flame extends Entity {
         this.pos = pos;
     }
 
-    public void horizontalRightLastExplodingImg() {
-        if (explosionCountDown == 0 || explosionCountDown >= 50) {
-            this.img = null;
-            if (explosionCountDown >= 50) {
-                explosionCountDown--;
-            } else {
-                setDone(true);
-            }
-        } else {
-            this.img = Sprite
-                    .bombExplodeSprite(Sprite.explosion_horizontal_right_last, Sprite.explosion_horizontal_right_last1,
-                            Sprite.explosion_horizontal_right_last2, explosionCountDown)
-                    .getFxImage();
-            explosionCountDown--;
-        }
-    }
+
 
     public void explodingImg() {
-        if (explosionCountDown == 0 || explosionCountDown >= 50) {
+        if (explosionCountDown == 0 || explosionCountDown >= 30) {
             this.img = null;
-            if (explosionCountDown >= 50) {
+            if (explosionCountDown >= 30) {
                 explosionCountDown--;
             } else {
                 setDone(true);
@@ -97,29 +82,41 @@ public class Flame extends Entity {
                 }
                 case "left_most": {
                     this.img = Sprite
-                            .bombExplodeSprite(Sprite.explosion_horizontal_left_last, Sprite.explosion_horizontal_left_last1,
+                            .bombExplodeSprite(Sprite.explosion_horizontal_left_last,
+                                    Sprite.explosion_horizontal_left_last1,
                                     Sprite.explosion_horizontal_left_last2, explosionCountDown)
                             .getFxImage();
                     break;
                 }
                 case "down_most": {
                     this.img = Sprite
-                            .bombExplodeSprite(Sprite.explosion_vertical_down_last, Sprite.explosion_vertical_down_last1,
+                            .bombExplodeSprite(Sprite.explosion_vertical_down_last,
+                                    Sprite.explosion_vertical_down_last1,
                                     Sprite.explosion_vertical_down_last2, explosionCountDown)
                             .getFxImage();
                     break;
                 }
                 case "right_most": {
                     this.img = Sprite
-                            .bombExplodeSprite(Sprite.explosion_horizontal_right_last, Sprite.explosion_horizontal_right_last1,
+                            .bombExplodeSprite(Sprite.explosion_horizontal_right_last,
+                                    Sprite.explosion_horizontal_right_last1,
                                     Sprite.explosion_horizontal_right_last2, explosionCountDown)
                             .getFxImage();
                     break;
                 }
                 case "top_most": {
                     this.img = Sprite
-                            .bombExplodeSprite(Sprite.explosion_vertical_top_last, Sprite.explosion_vertical_top_last1,
+                            .bombExplodeSprite(Sprite.explosion_vertical_top_last,
+                                    Sprite.explosion_vertical_top_last1,
                                     Sprite.explosion_vertical_top_last2, explosionCountDown)
+                            .getFxImage();
+                    break;
+                }
+                case "center": {
+                    this.img = Sprite
+                            .bombExplodeSprite(Sprite.bomb_exploded,
+                                    Sprite.bomb_exploded1,
+                                    Sprite.bomb_exploded2, explosionCountDown)
                             .getFxImage();
                     break;
                 }
@@ -127,10 +124,8 @@ public class Flame extends Entity {
             explosionCountDown--;
         }
     }
-
     @Override
     public void update() {
-        // horizontalRightLastExplodingImg();
         explodingImg();
     }
 }

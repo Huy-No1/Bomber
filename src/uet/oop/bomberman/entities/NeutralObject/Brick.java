@@ -11,7 +11,7 @@ public class Brick extends Entity {
     private Item item = null;
     private boolean damaged = false;
     private boolean done = false;
-    private int deathCountDown = 90;
+    private int deathCountDown = 30;
 
     public Brick(int x, int y, Image img) {
         super(x, y, img);
@@ -39,13 +39,13 @@ public class Brick extends Entity {
         this.done = done;
     }
 
-    public void collapse() {
+    public void collapsingImg() {
         if (deathCountDown == 0) {
             this.img = null;
             setDone(true);
         } else {
             this.img = Sprite
-                    .dieSprite(Sprite.brick_exploded2, Sprite.brick_exploded1, Sprite.brick_exploded, deathCountDown)
+                    .bombExplodeSprite(Sprite.brick_exploded2, Sprite.brick_exploded1, Sprite.brick_exploded, deathCountDown)
                     .getFxImage();
             deathCountDown--;
         }
@@ -55,7 +55,7 @@ public class Brick extends Entity {
     public void update() {
         if (this.isDamaged()) {
             // System.out.println("oke");
-            this.collapse();
+            collapsingImg();
         }
     }
 }

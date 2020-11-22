@@ -1,6 +1,10 @@
 package uet.oop.bomberman.entities.Bomberman;
 
+import javafx.scene.SnapshotParameters;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.Enemy.Enemy;
 import uet.oop.bomberman.entities.Entity;
@@ -13,12 +17,11 @@ import java.util.List;
 
 public class Bomb extends Entity {
 
-    private int bombLevel = 2;
+    private int bombLevel = 3;
     private List<Entity> flames = new ArrayList<>();
-    private Entity rightFlame;
     private boolean done = false;
     private boolean exploded = false;
-    private int explosionCountDown = 50;
+    private int explosionCountDown = 30;
     private int tickingCountDown = 90;
 
     public List<Entity> getFlames() {
@@ -26,33 +29,32 @@ public class Bomb extends Entity {
     }
 
     // set up flame cho phu hop
+
+
+    public void setTickingCountDown(int tickingCountDown) {
+        this.tickingCountDown = tickingCountDown;
+    }
+
+    public int getTickingCountDown() {
+        return tickingCountDown;
+    }
+
     public void setFlames() {
-        String[] pos = {"left", "down", "right", "top", "left_most", "down_most", "right_most", "top_most" };
+        String[] pos = {"left", "down", "right", "top", "left_most", "down_most", "right_most", "top_most", "center" };
         int[] iX = {-1, 0, 1, 0};
         int[] iY = {0, 1, 0, -1};
-        if (bombLevel == 1) {
-            for (int i = 0; i < 4; i++) {
-                if (BombermanGame.map[(int) y + iY[i]].charAt((int) x +iX[i]) != '#') {
-                    flames.add(new Flame(x + iX[i], y + iY[i], null, pos[i + 4]));
-                    System.out.println(i + 4);
-                }
-            }
-        } else if (bombLevel == 2) {
-            for (int i = 0; i < 4; i++) {
-                if (BombermanGame.map[(int) y + iY[i]].charAt((int) x +iX[i]) != '#') {
-                    Flame newFlame = new Flame(x + iX[i], y + iY[i], null, pos[i]);
-                    flames.add(newFlame);
-                }
-                if ((int) y + iY[i] * 2 >= 0 && (int) y + iY[i] * 2 < BombermanGame.HEIGHT &&
-                        (int) x + iX[i] * 2 >= 0 && (int) x + iX[i] * 2 < BombermanGame.WIDTH &&
-                        BombermanGame.map[(int) y + iY[i] * 2].charAt((int) x +iX[i] * 2) != '#' &&
-                        BombermanGame.map[(int) y + iY[i]].charAt((int) x +iX[i]) != '#' &&
-                        BombermanGame.map[(int) y + iY[i]].charAt((int) x +iX[i]) != '*')
-                {
-                    flames.add(new Flame(x + iX[i] * 2, y + iY[i] * 2, null, pos[i + 4]));
-                }
-            }
 
+        flames.add(new Flame(x, y, null, "center"));
+        for (int i = 0; i < 4; i++) {
+            for (int j = 1; j <= bombLevel; j++) {
+                char flag = BombermanGame.map[(int) y + j * iY[i]].charAt((int) x + j * iX[i]);
+                if (flag == '#' || flag == '*') break;
+                if (j == bombLevel) {
+                    flames.add(new Flame(x + iX[i] * bombLevel, y + iY[i] * bombLevel, null, pos[i + 4]));
+                } else {
+                    flames.add(new Flame(x + iX[i] * j, y + iY[i] * j, null, pos[i]));
+                }
+            }
         }
     }
 
@@ -78,14 +80,6 @@ public class Bomb extends Entity {
 
     public void setExploded(boolean exploded) {
         this.exploded = exploded;
-    }
-
-    public Entity getRightFlame() {
-        return rightFlame;
-    }
-
-    public void setRightFlame(Flame rightFlame) {
-        this.rightFlame = rightFlame;
     }
 
     public Bomb(int x, int y, Image img) {
@@ -116,7 +110,8 @@ public class Bomb extends Entity {
             this.img = null;
         } else {
             this.img = Sprite
-                    .bombExplodeSprite(Sprite.bomb_exploded, Sprite.bomb_exploded1, Sprite.bomb_exploded2, explosionCountDown)
+                    .bombExplodeSprite(Sprite.bomb_exploded, Sprite.bomb_exploded1,
+                            Sprite.bomb_exploded2, explosionCountDown)
                     .getFxImage();
             explosionCountDown--;
         }
@@ -131,58 +126,52 @@ public class Bomb extends Entity {
         }
     }
 
-    public void flameCollision(List<Entity> staticEntities, Entity bomberman, List<Entity> damagedEntities) {
-        for (Entity x : staticEntities) {
-            //System.out.println(x.rtg);
-            if (x instanceof Brick || x instanceof Enemy) {
+    public void handleFlameCollision(List<Entity> entities, List<Entity> staticObjects,
+                                     List<Entity> damagedEntities) {
+
+        // damage bricks
+        for (Entity o : staticObjects) {
+            if (o instanceof Brick) {
                 flames.forEach(flame -> {
-                    if (flame.rtg.intersects(x.rtg.getLayoutBounds())) {
-                        if (x instanceof Brick) {
-                            ((Brick) x).setDamaged(true);
-                        } else {
-                            ((Enemy) x).setDamaged(true);
+                    int oX = (int) o.getX(), fX = (int) flame.getX(), x = (int) this.getX();
+                    int oY = (int) o.getY(), fY = (int) flame.getY(), y = (int) this.getY();
+                    String pos = ((Flame) flame).getPos();
+
+                    if (!pos.equals("left_most") && !pos.equals("down_most") &&
+                            !pos.equals("right_most") && !pos.equals("top_most")) {
+                        if (oX == fX && x == oX && oY - fY == 1 ||
+                                oX == fX && x == oX && oY - fY == -1 ||
+                                oX - fX == -1 && oY == fY && y == oY ||
+                                oX - fX == 1 && oY == fY && y == oY) {
+                            ((Brick) o).setDamaged(true);
+                            damagedEntities.add(o);
                         }
-                        damagedEntities.add(x);
+                    } else {
+                        if (oX == fX && oY == fY) {
+                            ((Brick) o).setDamaged(true);
+                            damagedEntities.add(o);
+                        }
                     }
                 });
             }
         }
-        if (bomberman instanceof Bomber) {
-            flames.forEach(flame -> {
-                if (flame.rtg.intersects(bomberman.rtg.getLayoutBounds())) {
-                    ((Bomber) bomberman).setLive(false);
-                }
-            });
-        }
 
-        // return false;
-    }
+        // damage entities
+        for (Entity x : entities) {
+            if (x instanceof Bomber || x instanceof Enemy) {
+                flames.forEach(flame -> {
+                    if (flame.rtg.intersects(x.rtg.getLayoutBounds())) {
+                        if (x instanceof Bomber) {
+                            ((Bomber) x).setLive(false);
+                        } else if (x instanceof Enemy) {
+                            ((Enemy) x).setDamaged(true);
+                        }
+                        damagedEntities.add(x);
 
-
-    // Unused method and helpless
-    public boolean staticObjectsFlameCollision(Entity e) {
-        if (this.getX() == e.getX()) {
-            if(this.getY() - e.getY() <= this.bombLevel && e.getY() - this.getY() <= this.bombLevel) {
-                for (int y = (int) this.getY() - this.bombLevel + 1; y < this.getY() + this.bombLevel - 1; y++) {
-                    if (y < 0 || y > BombermanGame.WIDTH) continue;
-                    char tmp = BombermanGame.map[y].charAt((int) this.getX());
-                    if (tmp == '#' || tmp == '*') return false;
-                }
-                return true;
+                    }
+                });
             }
-        } else if (this.getY() == e.getY()) {
-            if(this.getX() - e.getX() <= this.bombLevel && e.getX() - this.getX() <= this.bombLevel) {
-                for (int x = (int) this.getX() - this.bombLevel + 1; x < this.getX() + this.bombLevel - 1; x++) {
-                    if (x < 0 || y > BombermanGame.HEIGHT) continue;
-                    char tmp = BombermanGame.map[(int) this.getY()].charAt(x);
-                    if (tmp == '#' || tmp == '*') return false;
-                }
-                return true;
-            }
-        } else {
-            return false;
         }
-        return false;
     }
 }
 

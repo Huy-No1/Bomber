@@ -256,12 +256,8 @@ public class Sprite {
             return normal;
         } else if (animate < 20) {
             return x1;
-        } else if (animate < 30) {
-            return x2;
-        } else if (animate < 40) {
-            return x1;
         } else {
-            return normal;
+            return x2;
         }
     }
 

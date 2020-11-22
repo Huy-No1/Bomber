@@ -40,13 +40,18 @@ public class BombermanGame extends Application {
     public static final int WIDTH = 31;
     public static final int HEIGHT = 13;
 
-    private GraphicsContext gc;
+    public static GraphicsContext gc;
     private GraphicsContext gcentity;
     private Canvas canvas;
     private Canvas canvasentity;
+
     private List<Entity> entities = new ArrayList<>();
-    private List<Entity> stillObjects = new ArrayList<>();
-    private List<Entity> damagedEntities = new ArrayList<>();
+    private List<Entity> finalStaticObjects = new ArrayList<>(); // contains Grass and Walls
+    private List<Entity> staticObjects = new ArrayList<>(); // contains Items and Bricks
+    private List<Entity> flames = new ArrayList<>();
+    public static List<Entity> damagedEntities = new ArrayList<>();
+
+    // public static Entity[][] bricks = new Entity[32][14];
 
     public static String[] map;
     public static KeyInput keyInput = new KeyInput();
@@ -80,19 +85,22 @@ public class BombermanGame extends Application {
 
         //khoi tao map
         map = createMap();
+        entities.add(bomberman);
         render();
 
 
-        entities.add(bomberman);
+
         //loop
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long l) {
                 update();
+                render();
             }
         };
 
         timer.start();
+
         // nhan key tu ban phim
         scene.setOnKeyPressed(keyEvent -> {
             switch (keyEvent.getCode()) {
@@ -142,14 +150,7 @@ public class BombermanGame extends Application {
                         if (bomber.bombCounter() < bomber.bombLimit) {
                             Entity bomb = bomber.placeBomb();
                             entities.add(bomb);
-
-                            if (bomb instanceof Bomb) {
-                                Bomb newbomb = (Bomb) bomb;
-                                List<Entity> flames = newbomb.getFlames();
-                                entities.addAll(flames);
-                            }
-                            // System.out.println(bomb instanceof Bomb);
-
+                            flames.addAll(((Bomb) bomb).getFlames());
                         }
                     }
                     break;
@@ -179,30 +180,33 @@ public class BombermanGame extends Application {
                     switch (key) {
                         case '#': {
                             object = new Wall(j, i, Sprite.wall.getFxImage());
+                            finalStaticObjects.add(object);
                             break;
                         }
                         case '*': {
+                            finalStaticObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
                             object = new Brick(j, i, Sprite.brick.getFxImage());
-                            // System.out.println("(" + i + ", " + j + ")");
+                            staticObjects.add(object);
                             break;
                         }
                         case '1': {
-                            stillObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
+                            finalStaticObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
                             Enemy enemy = new Balloon(j, i, Sprite.balloom_left1.getFxImage());
                             entities.add(enemy);
                             break;
                         }
                         case '2': {
-                            stillObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
+                            finalStaticObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
                             Entity enemy = new Oneal(j, i, Sprite.oneal_left1.getFxImage());
                             entities.add(enemy);
                             break;
                         }
                         default: {
                             object = new Grass(j, i, Sprite.grass.getFxImage());
+                            finalStaticObjects.add(object);
+                            break;
                         }
                     }
-                    stillObjects.add(object);
                 }
             }
             return map;
@@ -213,48 +217,33 @@ public class BombermanGame extends Application {
     }
 
     public void update() {
-        try {
-            entities.forEach(o -> {
-                getTheExplosionDoneAndCheckForDamagedEntities(o);
-                damagedEntities.forEach(br -> damagingObjectsImg(br));
-            });
-
-        } catch (ConcurrentModificationException e) {
-            // System.out.println("were no errors to happen");
-        }
-
-        // bomberman collides enemies
-        if (bomberman instanceof Bomber) {
-            Bomber bomber = (Bomber) bomberman;
-            if (bomber.collision(entities)) {
-                bomber.setLive(false);
-            }
-//            if (!bomber.isLive() && bomber.getDeathCountDown() == 0) {
-//                bomber.setLive(true);
-//                bomber.setDeathCountDown(30);
-//                bomber.setLocation(1, 1);
-//            }
-        }
+        updateDamagedObjects(); // enemies, bricks and flames
         entities.forEach(Entity::update);
-        gcentity.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        entities.forEach(g -> g.render(gcentity));
-
+        flames.forEach(Entity::update);
     }
 
     public void render() {
-        stillObjects.forEach(g -> g.render(gc));
+        gcentity.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        finalStaticObjects.forEach(g -> g.render(gc));
+        staticObjects.forEach(g -> g.render(gc));
+        entities.forEach(g -> g.render(gcentity));
+        damagedEntities.forEach(g -> g.render(gc));
+        flames.forEach(g -> g.render(gcentity));
     }
 
-    public void damagingObjectsImg(Entity br) {
+
+
+
+
+    public void updateStaticObjectsAndEnemies(Entity br) {
         if (br instanceof Brick) {
             if(((Brick) br).isDone()) {
 
                 // replace the tile with the grass
                 damagedEntities.remove(br);
-                stillObjects.remove(br);
+                System.out.println(staticObjects.remove(br));
                 Entity grass = new Grass((int) br.getX(), (int) br.getY(), Sprite.grass.getFxImage());
-                stillObjects.add(grass);
-                grass.render(gc);
+                finalStaticObjects.add(grass);
 
                 // enable bomberman to go through the tile
                 String newMap = map[(int) br.getY()];
@@ -262,32 +251,50 @@ public class BombermanGame extends Application {
                         newMap.substring((int) br.getX() + 1);
 
             } else {
-                // exploding animation of bricks
                 br.update();
-                br.render(gc);
             }
         }
     }
 
-    public void getTheExplosionDoneAndCheckForDamagedEntities(Entity o) {
+    public void checkForDamagedEntities(Entity o) {
         // remove bomb from the entites
         if (o instanceof Bomb) {
-            if (((Bomb) o).isDone()) {
+            if (((Bomb) o).isExploded()) {
                 // check if the bomb damange any objects
-                ((Bomb) o).flameCollision(stillObjects, bomberman, damagedEntities);
-                entities.remove(o);
-            }
-        }
-
-        // after the explosion is done, check if the it damage objects
-        if (o instanceof Flame) {
-            if (((Flame) o).isDone()) {
-                entities.remove(o);
+                ((Bomb) o).handleFlameCollision(entities, staticObjects, damagedEntities);
+                System.out.println(entities.remove(o));
             }
         }
     }
 
+    public void updateDamagedObjects() {
+        try {
 
+            // update bricks and enemies
+            entities.forEach(o -> {
+                checkForDamagedEntities(o);
+                damagedEntities.forEach(dam -> updateStaticObjectsAndEnemies(dam));
 
+            });
 
+            // get the explosion done (remove the flames)
+            flames.forEach(o -> {
+                if (o instanceof Flame) {
+                    if (((Flame) o).isDone()) {
+                        flames.remove(o);
+                    }
+                }
+            });
+        } catch (ConcurrentModificationException e) {
+            // System.out.println("were no errors to happen");
+        }
+
+        // update bomberman
+        if (bomberman instanceof Bomber) {
+            Bomber bomber = (Bomber) bomberman;
+            if (bomber.collision(entities)) {
+                bomber.setLive(false);
+            }
+        }
+    }
 }
