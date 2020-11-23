@@ -18,7 +18,7 @@ public class Bomber extends Entity {
     public List<Bomb> bombList = new ArrayList<Bomb>();
     private int bombRange = 1;
     public int bombLimit = 9;
-    private double speed = 0.08;
+    private double speed = 0.06;
     private int deathCountDown = 30;
     private boolean live = true;
 
@@ -31,7 +31,7 @@ public class Bomber extends Entity {
 
     public Bomber(double x, double y, Image img) {
         super(x, y, img);
-        rtg = new Rectangle(x, y, 0.6875, 1);
+        rtg = new Rectangle(x, y, 0.6875, 0.9);
     }
 
     public void setLive(boolean live) {
@@ -50,10 +50,6 @@ public class Bomber extends Entity {
         return deathCountDown;
     }
 
-    public void setLocation(double x, double y) {
-        rtg.setX(x);
-        rtg.setY(y);
-    }
 
     public static int round(double x) {
         double x_ = Math.floor(x);
@@ -66,7 +62,8 @@ public class Bomber extends Entity {
     /*
     MOVEMENTS AND BOMB PLACING.
      */
-    public void moveLeft() {
+    @Override
+    public boolean moveLeft() {
         img = Sprite
                 .movingSprite(Sprite.player_left, Sprite.player_left_1, Sprite.player_left_2, currentImage.left)
                 .getFxImage();
@@ -78,23 +75,24 @@ public class Bomber extends Entity {
         if (x - speed >= Math.floor(x)) {
             x -= speed;
             setLocation(x, y);
+            return true;
         } else {
             int x1 = Bomber.round(x);
             int y1 = Bomber.round(y);
             if (x1 == -1 || y1 == -1) {
-                return;
+                return false;
             } else if (BombermanGame.map[y1].charAt(x1 - 1) != '#' && BombermanGame.map[y1].charAt(x1 - 1) != '*') {
                 y = y1;
                 x = x - speed;
                 setLocation(x, y);
-                return;
+                return true;
             }
 
         }
-
+        return true;
     }
 
-    public void moveRight() {
+    public boolean moveRight() {
         img = Sprite
                 .movingSprite(Sprite.player_right, Sprite.player_right_1, Sprite.player_right_2, currentImage.right)
                 .getFxImage();
@@ -106,23 +104,24 @@ public class Bomber extends Entity {
         if (x + 0.6875 + speed <= Math.floor(x + 0.6875) + 1) {
             x += speed;
             setLocation(x, y);
+            return true;
         } else {
             int x1 = Bomber.round(x + 0.6875);
             int y1 = Bomber.round(y);
             if (y1 == -1 || x1 == -1) {
-                return;
+                return false;
             } else if (BombermanGame.map[y1].charAt(x1) != '#' && BombermanGame.map[y1].charAt(x1) != '*') {
                 y = y1;
                 x = x + speed;
                 setLocation(x, y);
-                return;
+                return true;
             }
 
         }
-
+        return true;
     }
 
-    public void moveUp() {
+    public boolean moveUp() {
         img = Sprite
                 .movingSprite(Sprite.player_up, Sprite.player_up_1, Sprite.player_up_2, currentImage.up)
                 .getFxImage();
@@ -134,25 +133,26 @@ public class Bomber extends Entity {
         if (y - speed >= Math.floor(y)) {
             y -= speed;
             setLocation(x, y);
+            return true;
         } else {
             int x1 = Bomber.round(x);
             int y1 = Bomber.round(y);
             if (x1 == -1 || y1 == -1) {
-                return;
+                return false;
             } else if (BombermanGame.map[y1 - 1].charAt(x1) != '#' && BombermanGame.map[y1 - 1].charAt(x1) != '*') {
                 double x_ = x - Math.floor(x);
                 if (x_ <= 0.3 && x_ >= 0.1) x = x1 + 0.24;
                 else if ((x_ >= 0.7)) x = x1;
                 y -= speed;
                 setLocation(x, y);
-                return;
+                return true;
             }
 
         }
-
+        return true;
     }
-
-    public void moveDown() {
+@Override
+    public boolean moveDown() {
         img = Sprite
                 .movingSprite(Sprite.player_down, Sprite.player_down_1, Sprite.player_down_2, currentImage.down)
                 .getFxImage();
@@ -164,21 +164,23 @@ public class Bomber extends Entity {
         if (y + 1 + speed <= Math.ceil(y + 1)) {
             y += speed;
             setLocation(x, y);
+            return true;
         } else {
 
             int x1 = Bomber.round(x);
             int y1 = Bomber.round(y + 1);
             if (y1 == -1 || x1 == -1) {
-                return;
+                return false;
             } else if (BombermanGame.map[y1].charAt(x1) != '#' && BombermanGame.map[y1].charAt(x1) != '*') {
                 double x_ = x - Math.floor(x);
                 if (x_ <= 0.3 && x_ >= 0.1) x = x1 + 0.24;
                 else if ((x_ >= 0.7)) x = x1;
                 y += speed;
                 setLocation(x, y);
-                return;
+                return true;
             }
         }
+        return true;
     }
 
     public Entity placeBomb() {
@@ -216,7 +218,7 @@ public class Bomber extends Entity {
                 }
             }
         } else {
-                dieImg();
+            dieImg();
         }
     }
 

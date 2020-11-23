@@ -34,31 +34,42 @@ public abstract class Entity {
         }
     }
 
-    public void moveLeft() {
+    public boolean moveLeft() {
+        return true;
     }
 
     ;
 
-    public void moveRight() {
+    public boolean moveRight() {
+        return true;
     }
 
     ;
 
-    public void moveUp() {
+    public boolean moveUp() {
+        return true;
     }
 
     ;
 
-    public void moveDown() {
+    public boolean moveDown() {
+        return true;
     }
 
     ;
 
-    public double getX(){
+    public void setLocation(double x, double y) {
+        rtg.setX(x);
+        rtg.setY(y);
+    }
+
+    public double getX() {
         return x;
     }
-    public double getY(){
+
+    public double getY() {
         return y;
     }
+
     public abstract void update();
 }

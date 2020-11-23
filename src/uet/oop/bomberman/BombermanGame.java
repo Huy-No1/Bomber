@@ -11,8 +11,13 @@ import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.entities.Bomberman.Bomb;
 import uet.oop.bomberman.entities.Bomberman.Bomber;
 import uet.oop.bomberman.entities.Enemy.Balloon;
+import uet.oop.bomberman.entities.Enemy.Doll;
 import uet.oop.bomberman.entities.Enemy.Enemy;
 import uet.oop.bomberman.entities.Enemy.Oneal;
+import uet.oop.bomberman.entities.Item.BombsItem;
+import uet.oop.bomberman.entities.Item.FlameItem;
+import uet.oop.bomberman.entities.Item.Item;
+import uet.oop.bomberman.entities.Item.SpeedItem;
 import uet.oop.bomberman.entities.NeutralObject.Brick;
 import uet.oop.bomberman.entities.NeutralObject.Flame;
 import uet.oop.bomberman.entities.NeutralObject.Grass;
@@ -25,6 +30,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Scanner;
+
 /*
     0. Tao canvas
     1. Khoi tao map:
@@ -89,7 +95,6 @@ public class BombermanGame extends Application {
         render();
 
 
-
         //loop
         AnimationTimer timer = new AnimationTimer() {
             @Override
@@ -123,7 +128,8 @@ public class BombermanGame extends Application {
                 case SPACE: {
 
                 }
-                default: {}
+                default: {
+                }
             }
         });
         scene.setOnKeyReleased(keyEvent -> {
@@ -201,6 +207,30 @@ public class BombermanGame extends Application {
                             entities.add(enemy);
                             break;
                         }
+                        case '3': {
+                            finalStaticObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
+                            Entity enemy = new Doll(j, i, Sprite.doll_right1.getFxImage());
+                            entities.add(enemy);
+                            break;
+                        }
+                        case 'b': {
+                            staticObjects.add(new Brick(j, i, Sprite.brick.getFxImage()
+                                    , new BombsItem(j, i, Sprite.powerup_bombs.getFxImage())));
+
+                            break;
+                        }
+                        case 's': {
+                            staticObjects.add(new Brick(j, i, Sprite.brick.getFxImage()
+                                    , new SpeedItem(j, i, Sprite.powerup_speed.getFxImage())));
+
+                            break;
+                        }
+                        case 'f': {
+                            staticObjects.add(new Brick(j, i, Sprite.brick.getFxImage()
+                                    , new FlameItem(j, i, Sprite.powerup_flames.getFxImage())));
+
+                            break;
+                        }
                         default: {
                             object = new Grass(j, i, Sprite.grass.getFxImage());
                             finalStaticObjects.add(object);
@@ -232,18 +262,31 @@ public class BombermanGame extends Application {
     }
 
 
-
-
-
     public void updateStaticObjectsAndEnemies(Entity br) {
         if (br instanceof Brick) {
-            if(((Brick) br).isDone()) {
+            Brick brick = (Brick) br;
+            if (brick.isDone()) {
+                // replace the tile with the grass or Item
+                Entity entity = new Grass((int) br.getX(), (int) br.getY(), Sprite.grass.getFxImage());
+                if (brick.getItem() != null) {
 
-                // replace the tile with the grass
+                    if (brick.getItem() instanceof BombsItem) {
+                        entity = new BombsItem((int) br.getX(), (int) br.getY(), Sprite.powerup_bombs.getFxImage());
+                    }
+                    if (brick.getItem() instanceof SpeedItem) {
+                        entity = new SpeedItem((int) br.getX(), (int) br.getY(), Sprite.powerup_speed.getFxImage());
+                    }
+                    if (brick.getItem() instanceof FlameItem) {
+                        entity = new FlameItem((int) br.getX(), (int) br.getY(), Sprite.powerup_flamepass.getFxImage());
+                    }
+                    staticObjects.add(entity);
+                }
+                else {
+                    finalStaticObjects.add(entity);
+                }
                 damagedEntities.remove(br);
                 System.out.println(staticObjects.remove(br));
-                Entity grass = new Grass((int) br.getX(), (int) br.getY(), Sprite.grass.getFxImage());
-                finalStaticObjects.add(grass);
+
 
                 // enable bomberman to go through the tile
                 String newMap = map[(int) br.getY()];

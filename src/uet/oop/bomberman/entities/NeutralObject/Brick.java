@@ -39,6 +39,10 @@ public class Brick extends Entity {
         this.done = done;
     }
 
+    public Item getItem() {
+        return item;
+    }
+
     public void collapsingImg() {
         if (deathCountDown == 0) {
             this.img = null;
