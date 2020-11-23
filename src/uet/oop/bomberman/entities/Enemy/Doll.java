@@ -14,14 +14,11 @@ public class Doll extends Enemy {
 
     @Override
     public boolean moveLeft() {
-        if(throughWall) {
+        if (throughWall) {
             img = Sprite
                     .movingSprite(Sprite.doll_left1, Sprite.doll_left2, Sprite.doll_left3, currentImage.left)
                     .getFxImage();
-            if(10*x-Math.floor(10*x)==0.25 || 10*x-Math.floor(10*x)==0.75)
-                x = (double) Math.round((x - 0.025) * 1000) / 1000;
-        }
-        else {
+        } else {
             img = Sprite
                     .movingSprite(Sprite.minvo_left1, Sprite.minvo_left2, Sprite.minvo_left3, currentImage.left)
                     .getFxImage();
@@ -38,14 +35,12 @@ public class Doll extends Enemy {
 
     @Override
     public boolean moveDown() {
-        if(throughWall) {
+        if (throughWall) {
             img = Sprite
                     .movingSprite(Sprite.doll_right1, Sprite.doll_right2, Sprite.doll_right3, currentImage.right)
                     .getFxImage();
-            if(10*y-Math.floor(10*y)==0.25 || 10*y-Math.floor(10*y)==0.75)
-                y = (double) Math.round((y + 0.025) * 1000) / 1000;
-        }
-        else {
+
+        } else {
             img = Sprite
                     .movingSprite(Sprite.minvo_right1, Sprite.minvo_right2, Sprite.minvo_right3, currentImage.right)
                     .getFxImage();
@@ -61,14 +56,11 @@ public class Doll extends Enemy {
 
     @Override
     public boolean moveRight() {
-        if(throughWall) {
+        if (throughWall) {
             img = Sprite
                     .movingSprite(Sprite.doll_right1, Sprite.doll_right2, Sprite.doll_right3, currentImage.right)
                     .getFxImage();
-            if(10*x-Math.floor(10*x)==0.25 || 10*x-Math.floor(10*x)==0.75)
-                x = (double) Math.round((x + 0.025) * 1000) / 1000;
-        }
-        else {
+        } else {
             img = Sprite
                     .movingSprite(Sprite.minvo_right1, Sprite.minvo_right2, Sprite.minvo_right3, currentImage.right)
                     .getFxImage();
@@ -84,14 +76,11 @@ public class Doll extends Enemy {
 
     @Override
     public boolean moveUp() {
-        if(throughWall) {
+        if (throughWall) {
             img = Sprite
                     .movingSprite(Sprite.doll_left1, Sprite.doll_left2, Sprite.doll_left3, currentImage.left)
                     .getFxImage();
-            if(10*y-Math.floor(10*y)==0.25 || 10*y-Math.floor(10*y)==0.75)
-                y = (double) Math.round((y - 0.025) * 1000) / 1000;
-        }
-        else {
+        } else {
             img = Sprite
                     .movingSprite(Sprite.minvo_left1, Sprite.minvo_left2, Sprite.minvo_left3, currentImage.left)
                     .getFxImage();
@@ -106,10 +95,22 @@ public class Doll extends Enemy {
     }
 
     @Override
+    public void dieImg() {
+        if (deathCountDown == 0) {
+            this.img = null;
+        } else {
+            this.img = Sprite
+                    .dieSprite(Sprite.doll_dead, Sprite.doll_dead, Sprite.doll_dead, deathCountDown)
+                    .getFxImage();
+            deathCountDown--;
+        }
+    }
+
+    @Override
     public void update() {
-        if(life ==1) {
-            throughWall= true;
-            speed= 0.025;
+        if (life == 1) {
+            throughWall = true;
+            speed = 0.025;
         }
 
 

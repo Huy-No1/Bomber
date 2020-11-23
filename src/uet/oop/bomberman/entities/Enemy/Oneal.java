@@ -4,14 +4,15 @@ import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.graphics.Sprite;
 
-public class Oneal extends Enemy{
+public class Oneal extends Enemy {
     public Oneal(int x, int y, Image img) {
         super(x, y, img);
-        speed= 0.05;
-        life= 1;
-        throughWall= false;
-        // rtg = new Rectangle(x, y, 1, 1);
+        speed = 0.05;
+        life = 1;
+        throughWall = false;
+
     }
+
     @Override
     public boolean moveLeft() {
         img = Sprite
@@ -63,5 +64,17 @@ public class Oneal extends Enemy{
             currentImage.up++;
         }
         return super.moveUp();
+    }
+
+    @Override
+    public void dieImg() {
+        if (deathCountDown == 0) {
+            this.img = null;
+        } else {
+            this.img = Sprite
+                    .dieSprite(Sprite.oneal_dead, Sprite.oneal_dead, Sprite.oneal_dead, deathCountDown)
+                    .getFxImage();
+            deathCountDown--;
+        }
     }
 }

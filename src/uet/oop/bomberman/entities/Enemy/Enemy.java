@@ -9,15 +9,16 @@ import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.CurrentImage;
 import uet.oop.bomberman.entities.Entity;
+import uet.oop.bomberman.graphics.Sprite;
 
 public abstract class Enemy extends Entity {
-
     protected boolean damaged = false;
     protected double speed;
     protected int life;
     protected boolean throughWall;
     protected int direction = 1;
     protected CurrentImage currentImage = new CurrentImage();
+    protected int deathCountDown = 90;
 
     public Enemy(int x, int y, Image img) {
         super(x, y, img);
@@ -31,6 +32,17 @@ public abstract class Enemy extends Entity {
 
     public boolean isDamaged() {
         return damaged;
+    }
+
+    public void dieImg() {
+        if (deathCountDown == 0) {
+            this.img = null;
+        } else {
+            this.img = Sprite
+                    .dieSprite(Sprite.balloom_dead, Sprite.balloom_dead, Sprite.balloom_dead, deathCountDown)
+                    .getFxImage();
+            deathCountDown--;
+        }
     }
 
     @Override
@@ -142,9 +154,8 @@ public abstract class Enemy extends Entity {
         }
 
         if (life == 0) {
-            img = null;
-        }
-        else {
+            dieImg();
+        } else {
 
             if (direction == 1) {
                 if (!moveLeft()) direction = (int) (Math.random() * 4 + 1);

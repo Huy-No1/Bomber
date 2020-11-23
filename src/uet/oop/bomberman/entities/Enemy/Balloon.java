@@ -65,4 +65,16 @@ public class Balloon extends Enemy {
         }
         return super.moveUp();
     }
+
+    @Override
+    public void dieImg() {
+        if (deathCountDown == 0) {
+            this.img = null;
+        } else {
+            this.img = Sprite
+                    .dieSprite(Sprite.balloom_dead, Sprite.balloom_dead, Sprite.balloom_dead, deathCountDown)
+                    .getFxImage();
+            deathCountDown--;
+        }
+    }
 }
