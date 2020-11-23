@@ -216,19 +216,19 @@ public class BombermanGame extends Application {
                         case 'b': {
                             staticObjects.add(new Brick(j, i, Sprite.brick.getFxImage()
                                     , new BombsItem(j, i, Sprite.powerup_bombs.getFxImage())));
-
+                            map[i] = map[i].replace('b', '*');
                             break;
                         }
                         case 's': {
                             staticObjects.add(new Brick(j, i, Sprite.brick.getFxImage()
                                     , new SpeedItem(j, i, Sprite.powerup_speed.getFxImage())));
-
+                            map[i] = map[i].replace('s', '*');
                             break;
                         }
                         case 'f': {
                             staticObjects.add(new Brick(j, i, Sprite.brick.getFxImage()
                                     , new FlameItem(j, i, Sprite.powerup_flames.getFxImage())));
-
+                            map[i] = map[i].replace('f', '*');
                             break;
                         }
                         default: {
@@ -250,6 +250,7 @@ public class BombermanGame extends Application {
         updateDamagedObjects(); // enemies, bricks and flames
         entities.forEach(Entity::update);
         flames.forEach(Entity::update);
+        updateItem();
     }
 
     public void render() {
@@ -280,8 +281,7 @@ public class BombermanGame extends Application {
                         entity = new FlameItem((int) br.getX(), (int) br.getY(), Sprite.powerup_flamepass.getFxImage());
                     }
                     staticObjects.add(entity);
-                }
-                else {
+                } else {
                     finalStaticObjects.add(entity);
                 }
                 damagedEntities.remove(br);
@@ -296,6 +296,8 @@ public class BombermanGame extends Application {
             } else {
                 br.update();
             }
+        } else if (br instanceof Enemy) {
+            if (br.getImg() == null) entities.remove(br);
         }
     }
 
@@ -337,6 +339,31 @@ public class BombermanGame extends Application {
             Bomber bomber = (Bomber) bomberman;
             if (bomber.collision(entities)) {
                 bomber.setLive(false);
+            }
+        }
+    }
+
+    public void updateItem() {
+        int size= staticObjects.size();
+        for (int i = 0; i < size; i++) {
+            Entity o = staticObjects.get(i);
+            if (o instanceof Item) {
+                if (((Item) o).collision(bomberman)) {
+                    if(o instanceof SpeedItem) {
+                        ((Bomber) bomberman).speed+=0.01;
+                    }
+                    else if(o instanceof FlameItem) {
+                        ((Bomber) bomberman).speed+=0.01;
+                    }
+                    else {
+                        ((Bomber) bomberman).bombLimit++;
+                    }
+                    staticObjects.remove(i);
+                    Entity grass = new Grass((int) o.getX(), (int) o.getY(), Sprite.grass.getFxImage());
+                    finalStaticObjects.add(grass);
+                    i--;
+                    size--;
+                }
             }
         }
     }

@@ -8,8 +8,8 @@ public class SpeedItem extends Item{
         super(x, y, img);
     }
 
-//    @Override
-//    public void update() {
-//
-//    }
+    @Override
+    public void update() {
+
+    }
 }

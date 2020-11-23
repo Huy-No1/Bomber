@@ -6,6 +6,7 @@ import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.CurrentImage;
 import uet.oop.bomberman.entities.Enemy.Enemy;
 import uet.oop.bomberman.entities.Entity;
+import uet.oop.bomberman.entities.Item.Item;
 import uet.oop.bomberman.entities.KeyInput;
 import uet.oop.bomberman.graphics.Sprite;
 
@@ -17,8 +18,8 @@ public class Bomber extends Entity {
     // ability
     public List<Bomb> bombList = new ArrayList<Bomb>();
     private int bombRange = 1;
-    public int bombLimit = 9;
-    private double speed = 0.06;
+    public int bombLimit = 1;
+    public double speed = 0.06;
     private int deathCountDown = 30;
     private boolean live = true;
 
@@ -151,7 +152,8 @@ public class Bomber extends Entity {
         }
         return true;
     }
-@Override
+
+    @Override
     public boolean moveDown() {
         img = Sprite
                 .movingSprite(Sprite.player_down, Sprite.player_down_1, Sprite.player_down_2, currentImage.down)
@@ -222,7 +224,9 @@ public class Bomber extends Entity {
         }
     }
 
+    // Collision Enemy
     public boolean collision(List<Entity> entities) {
+
         for (Entity x : entities) {
             if (x instanceof Enemy) {
                 if (this.rtg.intersects(x.rtg.getLayoutBounds())) {
@@ -232,4 +236,8 @@ public class Bomber extends Entity {
         }
         return false;
     }
+
 }
+
+
+

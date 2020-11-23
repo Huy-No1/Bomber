@@ -1,6 +1,7 @@
 package uet.oop.bomberman.entities.Enemy;
 
 import javafx.scene.image.Image;
+import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Doll extends Enemy {
@@ -17,6 +18,8 @@ public class Doll extends Enemy {
             img = Sprite
                     .movingSprite(Sprite.doll_left1, Sprite.doll_left2, Sprite.doll_left3, currentImage.left)
                     .getFxImage();
+            if(10*x-Math.floor(10*x)==0.25 || 10*x-Math.floor(10*x)==0.75)
+                x = (double) Math.round((x - 0.025) * 1000) / 1000;
         }
         else {
             img = Sprite
@@ -28,6 +31,7 @@ public class Doll extends Enemy {
         } else {
             currentImage.left++;
         }
+
         return super.moveLeft();
 
     }
@@ -38,6 +42,8 @@ public class Doll extends Enemy {
             img = Sprite
                     .movingSprite(Sprite.doll_right1, Sprite.doll_right2, Sprite.doll_right3, currentImage.right)
                     .getFxImage();
+            if(10*y-Math.floor(10*y)==0.25 || 10*y-Math.floor(10*y)==0.75)
+                y = (double) Math.round((y + 0.025) * 1000) / 1000;
         }
         else {
             img = Sprite
@@ -49,6 +55,7 @@ public class Doll extends Enemy {
         } else {
             currentImage.down++;
         }
+
         return super.moveDown();
     }
 
@@ -58,6 +65,8 @@ public class Doll extends Enemy {
             img = Sprite
                     .movingSprite(Sprite.doll_right1, Sprite.doll_right2, Sprite.doll_right3, currentImage.right)
                     .getFxImage();
+            if(10*x-Math.floor(10*x)==0.25 || 10*x-Math.floor(10*x)==0.75)
+                x = (double) Math.round((x + 0.025) * 1000) / 1000;
         }
         else {
             img = Sprite
@@ -69,6 +78,7 @@ public class Doll extends Enemy {
         } else {
             currentImage.right++;
         }
+
         return super.moveRight();
     }
 
@@ -78,6 +88,8 @@ public class Doll extends Enemy {
             img = Sprite
                     .movingSprite(Sprite.doll_left1, Sprite.doll_left2, Sprite.doll_left3, currentImage.left)
                     .getFxImage();
+            if(10*y-Math.floor(10*y)==0.25 || 10*y-Math.floor(10*y)==0.75)
+                y = (double) Math.round((y - 0.025) * 1000) / 1000;
         }
         else {
             img = Sprite
@@ -89,6 +101,7 @@ public class Doll extends Enemy {
         } else {
             currentImage.up++;
         }
+
         return super.moveUp();
     }
 
@@ -96,8 +109,10 @@ public class Doll extends Enemy {
     public void update() {
         if(life ==1) {
             throughWall= true;
-            speed= 0.05;
+            speed= 0.025;
         }
+
+
         int a[] = new int[3];
         if (x - Math.floor(x) == 0 && y - Math.floor(y) == 0 && ((int) x) % 2 != 0 && ((int) y) % 2 != 0) {
             switch (direction) {

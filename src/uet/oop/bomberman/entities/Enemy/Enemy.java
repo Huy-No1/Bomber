@@ -14,10 +14,10 @@ public abstract class Enemy extends Entity {
 
     protected boolean damaged = false;
     protected double speed;
-    protected int life ;
+    protected int life;
     protected boolean throughWall;
     protected int direction = 1;
-    protected CurrentImage currentImage= new CurrentImage();
+    protected CurrentImage currentImage = new CurrentImage();
 
     public Enemy(int x, int y, Image img) {
         super(x, y, img);
@@ -119,7 +119,7 @@ public abstract class Enemy extends Entity {
                 }
                 return false;
             } else {
-                if ( BombermanGame.map[(int) y + 1].charAt((int) x) != '#') {
+                if (BombermanGame.map[(int) y + 1].charAt((int) x) != '#') {
                     y = (double) Math.round((y + speed) * 1000) / 1000;
                     setLocation(x, y);
                     return true;
@@ -135,22 +135,31 @@ public abstract class Enemy extends Entity {
 
     @Override
     public void update() {
-//        if (x - Math.floor(x) == 0 && y - Math.floor(y) == 0) {
-//            direction = (int) (Math.random() * 4 + 1);
-//        }
-        if (direction == 1) {
-            if (!moveLeft()) direction = (int) (Math.random() * 4 + 1);
 
-        }
-        if (direction == 2) {
-            if (!moveRight()) direction = (int) (Math.random() * 4 + 1);
+        if (isDamaged()) {
+            setDamaged(false);
+            life--;
         }
 
-        if (direction == 3) {
-            if (!moveUp()) direction = (int) (Math.random() * 4 + 1);
+        if (life == 0) {
+            img = null;
         }
-        if (direction == 4) {
-            if (!moveDown()) direction = (int) (Math.random() * 4 + 1);
+        else {
+
+            if (direction == 1) {
+                if (!moveLeft()) direction = (int) (Math.random() * 4 + 1);
+
+            }
+            if (direction == 2) {
+                if (!moveRight()) direction = (int) (Math.random() * 4 + 1);
+            }
+
+            if (direction == 3) {
+                if (!moveUp()) direction = (int) (Math.random() * 4 + 1);
+            }
+            if (direction == 4) {
+                if (!moveDown()) direction = (int) (Math.random() * 4 + 1);
+            }
         }
     }
 }
