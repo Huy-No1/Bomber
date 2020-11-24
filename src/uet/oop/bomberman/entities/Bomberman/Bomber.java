@@ -6,7 +6,6 @@ import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.CurrentImage;
 import uet.oop.bomberman.entities.Enemy.Enemy;
 import uet.oop.bomberman.entities.Entity;
-import uet.oop.bomberman.entities.Item.Item;
 import uet.oop.bomberman.entities.KeyInput;
 import uet.oop.bomberman.graphics.Sprite;
 
@@ -19,8 +18,8 @@ public class Bomber extends Entity {
     public List<Bomb> bombList = new ArrayList<Bomb>();
     private int bombRange = 1;
     public int bombLimit = 1;
-    public double speed = 0.06;
-    private int deathCountDown = 30;
+    public double speed = 0.08;
+    private int deathCountDown = 15;
     private boolean live = true;
 
     /*
@@ -51,6 +50,34 @@ public class Bomber extends Entity {
         return deathCountDown;
     }
 
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public int getBombLimit() {
+        return bombLimit;
+    }
+
+    public void setBombLimit(int bombLimit) {
+        this.bombLimit = bombLimit;
+    }
+
+    public int getBombRange() {
+        return bombRange;
+    }
+
+    public void setBombRange(int bombRange) {
+        this.bombRange = bombRange;
+    }
+
+    public void setLocation(double x, double y) {
+        rtg.setX(x);
+        rtg.setY(y);
+    }
 
     public static int round(double x) {
         double x_ = Math.floor(x);
@@ -82,7 +109,9 @@ public class Bomber extends Entity {
             int y1 = Bomber.round(y);
             if (x1 == -1 || y1 == -1) {
                 return false;
-            } else if (BombermanGame.map[y1].charAt(x1 - 1) != '#' && BombermanGame.map[y1].charAt(x1 - 1) != '*') {
+            } else if (BombermanGame.map[y1].charAt(x1 - 1) != '#' &&
+                    BombermanGame.map[y1].charAt(x1 - 1) != '*' &&
+                    BombermanGame.map[y1].charAt(x1 - 1) != 't') {
                 y = y1;
                 x = x - speed;
                 setLocation(x, y);
@@ -111,7 +140,9 @@ public class Bomber extends Entity {
             int y1 = Bomber.round(y);
             if (y1 == -1 || x1 == -1) {
                 return false;
-            } else if (BombermanGame.map[y1].charAt(x1) != '#' && BombermanGame.map[y1].charAt(x1) != '*') {
+            } else if (BombermanGame.map[y1].charAt(x1) != '#' &&
+                    BombermanGame.map[y1].charAt(x1) != '*' &&
+                    BombermanGame.map[y1].charAt(x1) != 't') {
                 y = y1;
                 x = x + speed;
                 setLocation(x, y);
@@ -140,7 +171,9 @@ public class Bomber extends Entity {
             int y1 = Bomber.round(y);
             if (x1 == -1 || y1 == -1) {
                 return false;
-            } else if (BombermanGame.map[y1 - 1].charAt(x1) != '#' && BombermanGame.map[y1 - 1].charAt(x1) != '*') {
+            } else if (BombermanGame.map[y1 - 1].charAt(x1) != '#' &&
+                    BombermanGame.map[y1 - 1].charAt(x1) != '*' &&
+                    BombermanGame.map[y1 - 1].charAt(x1) != 't') {
                 double x_ = x - Math.floor(x);
                 if (x_ <= 0.3 && x_ >= 0.1) x = x1 + 0.24;
                 else if ((x_ >= 0.7)) x = x1;
@@ -173,7 +206,9 @@ public class Bomber extends Entity {
             int y1 = Bomber.round(y + 1);
             if (y1 == -1 || x1 == -1) {
                 return false;
-            } else if (BombermanGame.map[y1].charAt(x1) != '#' && BombermanGame.map[y1].charAt(x1) != '*') {
+            } else if (BombermanGame.map[y1].charAt(x1) != '#' &&
+                    BombermanGame.map[y1].charAt(x1) != '*' &&
+                    BombermanGame.map[y1].charAt(x1) != 't') {
                 double x_ = x - Math.floor(x);
                 if (x_ <= 0.3 && x_ >= 0.1) x = x1 + 0.24;
                 else if ((x_ >= 0.7)) x = x1;
@@ -201,7 +236,7 @@ public class Bomber extends Entity {
             this.img = null;
         } else {
             this.img = Sprite
-                    .dieSprite(Sprite.player_dead1, Sprite.player_dead2, Sprite.player_dead3, deathCountDown)
+                    .bombExplodeSprite(Sprite.player_dead3, Sprite.player_dead2, Sprite.player_dead1, deathCountDown)
                     .getFxImage();
             deathCountDown--;
         }
@@ -236,8 +271,4 @@ public class Bomber extends Entity {
         }
         return false;
     }
-
 }
-
-
-

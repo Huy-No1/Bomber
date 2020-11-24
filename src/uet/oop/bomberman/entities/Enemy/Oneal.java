@@ -72,7 +72,7 @@ public class Oneal extends Enemy {
             this.img = null;
         } else {
             this.img = Sprite
-                    .dieSprite(Sprite.oneal_dead, Sprite.oneal_dead, Sprite.oneal_dead, deathCountDown)
+                    .dieSprite(Sprite.mob_dead2, Sprite.mob_dead1, Sprite.oneal_dead, deathCountDown)
                     .getFxImage();
             deathCountDown--;
         }

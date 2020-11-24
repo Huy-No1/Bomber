@@ -72,7 +72,7 @@ public class Balloon extends Enemy {
             this.img = null;
         } else {
             this.img = Sprite
-                    .dieSprite(Sprite.balloom_dead, Sprite.balloom_dead, Sprite.balloom_dead, deathCountDown)
+                    .dieSprite(Sprite.mob_dead2, Sprite.mob_dead1, Sprite.balloom_dead, deathCountDown)
                     .getFxImage();
             deathCountDown--;
         }

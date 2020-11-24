@@ -19,6 +19,14 @@ public class Flame extends Entity {
         return done;
     }
 
+    public int getExplosionCountDown() {
+        return explosionCountDown;
+    }
+
+    public void setExplosionCountDown(int explosionCountDown) {
+        this.explosionCountDown = explosionCountDown;
+    }
+
     public void setPos(String pos) {
         this.pos = pos;
     }

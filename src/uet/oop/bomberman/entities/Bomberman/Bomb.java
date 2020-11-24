@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.Enemy.Enemy;
 import uet.oop.bomberman.entities.Entity;
@@ -21,7 +22,7 @@ public class Bomb extends Entity {
     private List<Entity> flames = new ArrayList<>();
     private boolean done = false;
     private boolean exploded = false;
-    private int explosionCountDown = 30;
+    private int explosionCountDown = 15;
     private int tickingCountDown = 90;
 
     public List<Entity> getFlames() {
@@ -44,11 +45,25 @@ public class Bomb extends Entity {
         int[] iX = {-1, 0, 1, 0};
         int[] iY = {0, 1, 0, -1};
 
+        // let not bomber cross the bomb
+        String mapz = BombermanGame.map[(int) y];
+        BombermanGame.map[(int) y] = mapz.substring(0, (int) x) + "t" +
+                mapz.substring((int) x + 1);
+
         flames.add(new Flame(x, y, null, "center"));
         for (int i = 0; i < 4; i++) {
             for (int j = 1; j <= bombLevel; j++) {
                 char flag = BombermanGame.map[(int) y + j * iY[i]].charAt((int) x + j * iX[i]);
-                if (flag == '#' || flag == '*') break;
+                if (flag == '#' || flag == '*') {
+                    if (flag == '*') {
+                        String map = BombermanGame.map[(int) y + j * iY[i]];
+
+                        // feature for chain explosion
+                        BombermanGame.map[(int) y + j * iY[i]] = map.substring(0, (int) x + j * iX[i]) + "t" +
+                                map.substring((int) x + j * iX[i] + 1);
+                    }
+                    break;
+                }
                 if (j == bombLevel) {
                     flames.add(new Flame(x + iX[i] * bombLevel, y + iY[i] * bombLevel, null, pos[i + 4]));
                 } else {
@@ -84,13 +99,30 @@ public class Bomb extends Entity {
 
     public Bomb(int x, int y, Image img) {
         super(x, y, img);
+        rtg = new Rectangle(x, y, 0.99, 0.99);
         setFlames();
     }
 
     public Bomb(int x, int y, Image img, int bombLevel) {
         super(x, y, img);
-        setFlames();
         this.bombLevel = bombLevel;
+        rtg = new Rectangle(x, y, 0.99, 0.99);
+        setFlames();
+    }
+
+    @Override
+    public void update() {
+        if (!isExploded()) {
+            tickingImg();
+        } else {
+            String mapz = BombermanGame.map[(int) y];
+            System.out.println(mapz);
+            BombermanGame.map[(int) y] = mapz.substring(0, (int) x) + " " +
+                    mapz.substring((int) x + 1);
+            System.out.println(BombermanGame.map[(int) y]);
+            explodingImg();
+
+        }
     }
 
     public void tickingImg() {
@@ -114,15 +146,6 @@ public class Bomb extends Entity {
                             Sprite.bomb_exploded2, explosionCountDown)
                     .getFxImage();
             explosionCountDown--;
-        }
-    }
-
-    @Override
-    public void update() {
-        if (!isExploded()) {
-            tickingImg();
-        } else {
-            explodingImg();
         }
     }
 
@@ -158,21 +181,31 @@ public class Bomb extends Entity {
 
         // damage entities
         for (Entity x : entities) {
-            if (x instanceof Bomber || x instanceof Enemy) {
+            if (x instanceof Bomber || x instanceof Enemy || x instanceof Bomb) {
                 flames.forEach(flame -> {
                     if (flame.rtg.intersects(x.rtg.getLayoutBounds())) {
                         if (x instanceof Bomber) {
                             ((Bomber) x).setLive(false);
+                            damagedEntities.add(x);
                         } else if (x instanceof Enemy) {
                             ((Enemy) x).setDamaged(true);
+                            damagedEntities.add(x);
                         }
-                        damagedEntities.add(x);
 
+                        // chain explosion
+                        if (x instanceof Bomb) {
+                            // if (((Bomb) x).getTickingCountDown() > 10)
+                                ((Bomb) x).setTickingCountDown(0);
+                            ((Bomb) x).getFlames().forEach(o -> {
+                                ((Flame) o).setExplosionCountDown(15);
+                            });
+                        }
                     }
                 });
             }
         }
     }
+
 }
 
 

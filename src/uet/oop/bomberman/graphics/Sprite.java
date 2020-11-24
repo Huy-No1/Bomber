@@ -95,16 +95,25 @@ public class Sprite {
     public static Sprite doll_dead = new Sprite(DEFAULT_SIZE, 13, 3, SpriteSheet.tiles, 16, 16);
 
     //Minvo
-    public static Sprite minvo_left1 = new Sprite(DEFAULT_SIZE, 8, 5, SpriteSheet.tiles, 16, 16);
-    public static Sprite minvo_left2 = new Sprite(DEFAULT_SIZE, 8, 6, SpriteSheet.tiles, 16, 16);
-    public static Sprite minvo_left3 = new Sprite(DEFAULT_SIZE, 8, 7, SpriteSheet.tiles, 16, 16);
+    public static Sprite minvo_left1 = new Sprite(DEFAULT_SIZE, 4, 5, SpriteSheet.tiles, 16, 16);
+    public static Sprite minvo_left2 = new Sprite(DEFAULT_SIZE, 4, 6, SpriteSheet.tiles, 16, 16);
+    public static Sprite minvo_left3 = new Sprite(DEFAULT_SIZE, 4, 7, SpriteSheet.tiles, 16, 16);
 
-    public static Sprite minvo_right1 = new Sprite(DEFAULT_SIZE, 9, 5, SpriteSheet.tiles, 16, 16);
-    public static Sprite minvo_right2 = new Sprite(DEFAULT_SIZE, 9, 6, SpriteSheet.tiles, 16, 16);
-    public static Sprite minvo_right3 = new Sprite(DEFAULT_SIZE, 9, 7, SpriteSheet.tiles, 16, 16);
+    public static Sprite minvo_right1 = new Sprite(DEFAULT_SIZE, 5, 5, SpriteSheet.tiles, 16, 16);
+    public static Sprite minvo_right2 = new Sprite(DEFAULT_SIZE, 5, 6, SpriteSheet.tiles, 16, 16);
+    public static Sprite minvo_right3 = new Sprite(DEFAULT_SIZE, 5, 7, SpriteSheet.tiles, 16, 16);
 
-    public static Sprite minvo_dead = new Sprite(DEFAULT_SIZE, 8, 8, SpriteSheet.tiles, 16, 16);
+    public static Sprite minvo_dead = new Sprite(DEFAULT_SIZE, 4, 8, SpriteSheet.tiles, 16, 16);
+    //ghost
+    public static Sprite ghost_left1 = new Sprite(DEFAULT_SIZE, 6, 5, SpriteSheet.tiles, 16, 16);
+    public static Sprite ghost_left2 = new Sprite(DEFAULT_SIZE, 6, 6, SpriteSheet.tiles, 16, 16);
+    public static Sprite ghost_left3 = new Sprite(DEFAULT_SIZE, 6, 7, SpriteSheet.tiles, 16, 16);
 
+    public static Sprite ghost_right1 = new Sprite(DEFAULT_SIZE, 7, 5, SpriteSheet.tiles, 16, 16);
+    public static Sprite ghost_right2 = new Sprite(DEFAULT_SIZE, 7, 6, SpriteSheet.tiles, 16, 16);
+    public static Sprite ghost_right3 = new Sprite(DEFAULT_SIZE, 7, 7, SpriteSheet.tiles, 16, 16);
+
+    public static Sprite ghost_dead = new Sprite(DEFAULT_SIZE, 6, 8, SpriteSheet.tiles, 16, 16);
     //Kondoria
     public static Sprite kondoria_left1 = new Sprite(DEFAULT_SIZE, 10, 5, SpriteSheet.tiles, 16, 16);
     public static Sprite kondoria_left2 = new Sprite(DEFAULT_SIZE, 10, 6, SpriteSheet.tiles, 16, 16);
@@ -227,9 +236,9 @@ public class Sprite {
     }
 
     public static Sprite dieSprite(Sprite normal, Sprite x1, Sprite x2, int animate) {
-        if (animate < 30) {
+        if (animate < 10) {
             return normal;
-        } else if (animate < 60) {
+        } else if (animate < 20) {
             return x1;
         } else {
             return x2;
@@ -237,25 +246,31 @@ public class Sprite {
     }
 
     public static Sprite bombTickingSprite(Sprite normal, Sprite x1, Sprite x2, int animate) {
-        if (animate < 15) {
+        if (animate < 10) {
+            return normal;
+        } else if (animate < 20) {
             return x2;
         } else if (animate < 30) {
             return x1;
-        } else if (animate < 45) {
+        } else if (animate < 40) {
             return normal;
+        } else if (animate < 50) {
+            return x1;
         } else if (animate < 60) {
             return x2;
-        } else if (animate < 75) {
-            return x1;
-        } else {
+        } else if (animate < 70) {
             return normal;
+        } else if (animate < 80) {
+            return x2;
+        } else {
+            return x1;
         }
     }
 
     public static Sprite bombExplodeSprite(Sprite normal, Sprite x1, Sprite x2, int animate) {
-        if (animate < 10) {
+        if (animate < 5) {
             return normal;
-        } else if (animate < 20) {
+        } else if (animate < 10) {
             return x1;
         } else {
             return x2;

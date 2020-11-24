@@ -16,7 +16,7 @@ public class Doll extends Enemy {
     public boolean moveLeft() {
         if (throughWall) {
             img = Sprite
-                    .movingSprite(Sprite.doll_left1, Sprite.doll_left2, Sprite.doll_left3, currentImage.left)
+                    .movingSprite(Sprite.ghost_left1, Sprite.ghost_left2, Sprite.ghost_left3, currentImage.left)
                     .getFxImage();
         } else {
             img = Sprite
@@ -37,7 +37,7 @@ public class Doll extends Enemy {
     public boolean moveDown() {
         if (throughWall) {
             img = Sprite
-                    .movingSprite(Sprite.doll_right1, Sprite.doll_right2, Sprite.doll_right3, currentImage.right)
+                    .movingSprite(Sprite.ghost_right1, Sprite.ghost_right2, Sprite.ghost_right3, currentImage.right)
                     .getFxImage();
 
         } else {
@@ -58,7 +58,7 @@ public class Doll extends Enemy {
     public boolean moveRight() {
         if (throughWall) {
             img = Sprite
-                    .movingSprite(Sprite.doll_right1, Sprite.doll_right2, Sprite.doll_right3, currentImage.right)
+                    .movingSprite(Sprite.ghost_right1, Sprite.ghost_right2, Sprite.ghost_right3, currentImage.right)
                     .getFxImage();
         } else {
             img = Sprite
@@ -78,7 +78,7 @@ public class Doll extends Enemy {
     public boolean moveUp() {
         if (throughWall) {
             img = Sprite
-                    .movingSprite(Sprite.doll_left1, Sprite.doll_left2, Sprite.doll_left3, currentImage.left)
+                    .movingSprite(Sprite.ghost_left1, Sprite.ghost_left2, Sprite.ghost_left3, currentImage.left)
                     .getFxImage();
         } else {
             img = Sprite
@@ -100,7 +100,7 @@ public class Doll extends Enemy {
             this.img = null;
         } else {
             this.img = Sprite
-                    .dieSprite(Sprite.doll_dead, Sprite.doll_dead, Sprite.doll_dead, deathCountDown)
+                    .dieSprite(Sprite.mob_dead2, Sprite.mob_dead1, Sprite.ghost_dead, deathCountDown)
                     .getFxImage();
             deathCountDown--;
         }

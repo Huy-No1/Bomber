@@ -11,7 +11,7 @@ public class Brick extends Entity {
     private Item item = null;
     private boolean damaged = false;
     private boolean done = false;
-    private int deathCountDown = 30;
+    private int deathCountDown = 90;
 
     public Brick(int x, int y, Image img) {
         super(x, y, img);
@@ -37,6 +37,10 @@ public class Brick extends Entity {
 
     public void setDone(boolean done) {
         this.done = done;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
     }
 
     public Item getItem() {
