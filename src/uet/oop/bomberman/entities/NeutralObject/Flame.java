@@ -37,12 +37,12 @@ public class Flame extends Entity {
 
     public Flame(double x, double y, Image img) {
         super(x, y, img);
-        rtg = new Rectangle(x, y, 0.99, 0.99);
+        rtg = new Rectangle(x, y, 0.90, 0.90);
     }
 
     public Flame(double x, double y, Image img, String pos) {
         super(x, y, img);
-        rtg = new Rectangle(x, y, 0.99, 0.99);
+        rtg = new Rectangle(x, y, 0.90, 0.90);
         this.pos = pos;
     }
 

@@ -10,10 +10,7 @@ import javafx.stage.Stage;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.entities.Bomberman.Bomb;
 import uet.oop.bomberman.entities.Bomberman.Bomber;
-import uet.oop.bomberman.entities.Enemy.Balloon;
-import uet.oop.bomberman.entities.Enemy.Doll;
-import uet.oop.bomberman.entities.Enemy.Enemy;
-import uet.oop.bomberman.entities.Enemy.Oneal;
+import uet.oop.bomberman.entities.Enemy.*;
 import uet.oop.bomberman.entities.Item.*;
 import uet.oop.bomberman.entities.NeutralObject.Brick;
 import uet.oop.bomberman.entities.NeutralObject.Flame;
@@ -46,6 +43,7 @@ public class BombermanGame extends Application {
     private GraphicsContext gcentity;
     private Canvas canvas;
     private Canvas canvasentity;
+    public SoundEffect soundEffect= new SoundEffect();
 
     public static List<Entity> entities = new ArrayList<>();
     public static List<Entity> finalStaticObjects = new ArrayList<>(); // contains Grass and Walls
@@ -89,10 +87,10 @@ public class BombermanGame extends Application {
         stage.show();
 
         //khoi tao map
-        map = createMap(1);
+        map = createMap(2);
         entities.add(bomberman);
         render();
-
+        SoundEffect.sound(SoundEffect.mediaPlayerbacksound);
 
 
         //loop
@@ -152,6 +150,7 @@ public class BombermanGame extends Application {
                 case SPACE: {
 
                     // limit the number of bomb (=1) at one tile
+
                     int curX = (int) Math.round(bomberman.getX()), curY = (int) Math.round(bomberman.getY());
                     if (bomberman instanceof Bomber && map[curY].charAt(curX) != 't') {
 
@@ -224,6 +223,13 @@ public class BombermanGame extends Application {
                             ++creepCounter;
                             break;
                         }
+                        case '4': {
+                            finalStaticObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
+                            Entity enemy = new Boss(j, i, Sprite.boss2_left2.getFxImage());
+                            entities.add(enemy);
+                            ++creepCounter;
+                            break;
+                        }
                         case 'b': {
                             staticObjects.add(new Brick(j, i, Sprite.brick.getFxImage()
                                     , new BombsItem(j, i, Sprite.powerup_bombs.getFxImage())));
@@ -277,7 +283,7 @@ public class BombermanGame extends Application {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        gcentity.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+         gcentity.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         finalStaticObjects.forEach(g -> g.render(gc));
         staticObjects.forEach(g -> g.render(gc));
         entities.forEach(g -> g.render(gcentity));
@@ -320,9 +326,13 @@ public class BombermanGame extends Application {
                 }
 
                 // enable bomberman to go through the tile
-                String newMap = map[(int) br.getY()];
-                map[(int) br.getY()] = newMap.substring(0, (int) br.getX()) + " " +
-                        newMap.substring((int) br.getX() + 1);
+                if (!(brick.getItem() instanceof Portal))  {
+                    String newMap = map[(int) br.getY()];
+                    map[(int) br.getY()] = newMap.substring(0, (int) br.getX()) + " " +
+                            newMap.substring((int) br.getX() + 1);
+                };
+
+
 
             } else {
                 br.update();
@@ -389,6 +399,8 @@ public class BombermanGame extends Application {
             Entity o = staticObjects.get(i);
             if (o instanceof Item) {
                 if (((Item) o).collision(bomberman)) {
+                    SoundEffect.mediaPlayerEatItem.stop();
+                    SoundEffect.sound(SoundEffect.mediaPlayerEatItem);
                     Bomber bomber = (Bomber) bomberman;
                     if (o instanceof SpeedItem) {
                         bomber.setSpeed(bomber.getSpeed() + 0.01);
@@ -427,7 +439,7 @@ public class BombermanGame extends Application {
             newLevel = false;
         }
 
-        if (creepCounter == 0) {
+        if (entities.size() == 1) {
             staticObjects.forEach(o -> {
                 if (o instanceof Portal) {
                     String mapz = map[(int) o.getY()];

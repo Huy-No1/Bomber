@@ -3,6 +3,7 @@ package uet.oop.bomberman.entities.Bomberman;
 import javafx.scene.image.Image;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.BombermanGame;
+import uet.oop.bomberman.SoundEffect;
 import uet.oop.bomberman.entities.CurrentImage;
 import uet.oop.bomberman.entities.Enemy.Enemy;
 import uet.oop.bomberman.entities.Entity;
@@ -21,6 +22,7 @@ public class Bomber extends Entity {
     public double speed = 0.08;
     private int deathCountDown = 15;
     private boolean live = true;
+    private boolean playsound = false;
 
     /*
     For rendering
@@ -232,6 +234,11 @@ public class Bomber extends Entity {
     }
 
     public void dieImg() {
+        if (!playsound) {
+            SoundEffect.mediaPlayerCollisionEnemy.stop();
+            SoundEffect.sound(SoundEffect.mediaPlayerCollisionEnemy);
+            playsound = true;
+        }
         if (deathCountDown == 0) {
             this.img = null;
         } else {
@@ -255,6 +262,7 @@ public class Bomber extends Entity {
                 }
             }
         } else {
+
             dieImg();
         }
     }
