@@ -21,7 +21,7 @@ public class Bomber extends Entity {
     public int bombLimit = 2;
     public double speed = 0.08;
     private int deathCountDown = 15;
-    private int live = 3;
+    private int live = 1;
     private boolean playsound = false;
 
     /*
@@ -262,7 +262,6 @@ public class Bomber extends Entity {
                 }
             }
         } else {
-
             dieImg();
         }
     }

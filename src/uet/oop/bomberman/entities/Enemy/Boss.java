@@ -1,18 +1,21 @@
 package uet.oop.bomberman.entities.Enemy;
 
 import javafx.scene.image.Image;
+import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Boss extends Enemy {
+
     public Boss(int x, int y, Image img) {
         super(x, y, img);
-        speed = 0.1;
+        speed = 0.025;
         life = 2;
         throughWall = false;
     }
 
     public boolean changemob = false;
     public int changedmodcountdown = 50;
+    public int generateCreepsCountDown = 200;
 
     @Override
     public boolean moveUp() {
@@ -119,8 +122,36 @@ public class Boss extends Enemy {
         }
     }
 
+    public void generateCreeps() {
+
+        int types[] = new int[]{1, 2, 3};
+        int type = types[(int) (Math.random() * 3 + 0)];
+        switch(type) {
+            case 1: {
+                for (int i = 0; i < 3; i++) {
+                    BombermanGame.entities.add(new Balloon((int) x, (int) y, Sprite.balloom_left1.getFxImage()));
+                }
+                break;
+            }
+
+            case 2: {
+                for (int i = 0; i < 3; i++) {
+                    BombermanGame.entities.add(new Oneal((int) x, (int) y, Sprite.oneal_left1.getFxImage()));
+                }
+                break;
+            }
+            case 3: {
+                for (int i = 0; i < 3; i++) {
+                    BombermanGame.entities.add(new Doll((int) x, (int) y, Sprite.doll_left1.getFxImage()));
+                }
+                break;
+            }
+            default: { break; }
+        }
+    }
     @Override
     public void update() {
+
         if (life == 2 && !changemob && isDamaged()) {
             changemobImg();
         } else {
@@ -142,7 +173,44 @@ public class Boss extends Enemy {
                 }
                 direction = a[(int) (Math.random() * 3 + 0)];
             }
-            super.update();
+
+            // super
+            if (isDamaged() && life == 2) {
+                setDamaged(false);
+                life = 1;
+            } else if (isDamaged() && life == 1) {
+                setDamaged(false);
+                life = 0;
+            }
+
+            if (life == 0) {
+                dieImg();
+            } else {
+                if (generateCreepsCountDown != 0) {
+                    generateCreepsCountDown--;
+                } else {
+                    if (BombermanGame.entities.size() < 15) {
+                        generateCreeps();
+                        generateCreepsCountDown = 200;
+                    }
+                }
+
+                if (direction == 1) {
+                    if (!moveLeft()) direction = (int) (Math.random() * 4 + 1);
+
+                }
+                if (direction == 2) {
+                    if (!moveRight()) direction = (int) (Math.random() * 4 + 1);
+                }
+
+                if (direction == 3) {
+                    if (!moveUp()) direction = (int) (Math.random() * 4 + 1);
+                }
+
+                if (direction == 4) {
+                    if (!moveDown()) direction = (int) (Math.random() * 4 + 1);
+                }
+            }
         }
     }
 }

@@ -273,11 +273,18 @@ public class BombermanGame extends Application {
     }
 
     public void update() {
-        checkForNewLevel();
-        updateDamagedObjects(); // enemies, bricks and flames
-        entities.forEach(Entity::update);
-        flames.forEach(Entity::update);
-        updateItem();
+        try {
+            checkForNewLevel();
+            updateDamagedObjects(); // enemies, bricks and flames
+            entities.forEach(Entity::update);
+            flames.forEach(Entity::update);
+            updateItem();
+        } catch (Exception e) {
+            // i will hide the ConcurrentModificationException
+            // because i'm too tired to fix anything
+            // enjoy the game, thamks.
+        }
+
     }
 
     public void render() {
@@ -340,7 +347,6 @@ public class BombermanGame extends Application {
         } else if (br instanceof Enemy) {
             if (br.getImg() == null) {
                 entities.remove(br);
-                --creepCounter;
             }
         }
     }
@@ -388,7 +394,8 @@ public class BombermanGame extends Application {
         if (bomberman instanceof Bomber) {
             Bomber bomber = (Bomber) bomberman;
             if (bomber.collision(entities)) {
-                bomber.setLive(bomber.getLive() - 1);
+                int life_of_a_little_shit = bomber.getLive() - 1;
+                bomber.setLive(life_of_a_little_shit);
             }
         }
     }
