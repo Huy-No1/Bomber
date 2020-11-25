@@ -1,7 +1,6 @@
 package uet.oop.bomberman;
 
 
-
 import java.io.File;
 
 import javafx.application.Application;
@@ -10,23 +9,26 @@ import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 public class SoundEffect extends Application{
-    //backsound
-    public static Media mediabacksound = new Media(new File("E:\\GIT\\Newfolder\\Sound\\backSound.mp3")
+    //backsoundsrc\Sound\backSound.mp3
+    public static Media mediaBackSound = new Media(new File("src\\Sound\\backSound.mp3")
             .toURI().toString());
-    public static MediaPlayer mediaPlayerbacksound = new MediaPlayer(mediabacksound);
+    public static MediaPlayer mediaPlayerbacksound = new MediaPlayer(mediaBackSound);
 
     //EatItem
-    public static Media mediaEatItem = new Media(new File("E:\\Bomberman SFX (6).wav")
+    public static Media mediaEatItem = new Media(new File("src\\Sound\\eatItem.wav")
             .toURI().toString());
     public static MediaPlayer mediaPlayerEatItem = new MediaPlayer(mediaEatItem);
 
-    //collisionEnemy.mp3
-    public static Media mediaCollisionEnemy = new Media(new File("D:\\Downloads\\02_Stage-Start.mp3")
+    //Die
+    public static Media mediaCollisionEnemy = new Media(new File("src\\Sound\\collision.wav")
             .toURI().toString());
     public static MediaPlayer mediaPlayerCollisionEnemy = new MediaPlayer(mediaCollisionEnemy);
-    public static void main(String[] args) {
-        launch(args);
-    }
+
+    //BombExploded
+    public static Media mediaBombExploded = new Media(new File("src\\Sound\\bombExplode.wav")
+            .toURI().toString());
+    public static MediaPlayer mediaPlayerBombExploded = new MediaPlayer(mediaBombExploded);
+
 
     public static void sound(MediaPlayer mp) {
         mp.play();

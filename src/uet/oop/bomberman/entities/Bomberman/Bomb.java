@@ -7,6 +7,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.BombermanGame;
+import uet.oop.bomberman.SoundEffect;
 import uet.oop.bomberman.entities.Enemy.Enemy;
 import uet.oop.bomberman.entities.Entity;
 import uet.oop.bomberman.entities.NeutralObject.Brick;
@@ -24,6 +25,7 @@ public class Bomb extends Entity {
     private boolean exploded = false;
     private int explosionCountDown = 15;
     private int tickingCountDown = 90;
+    private boolean playsound = false;
 
     public List<Entity> getFlames() {
         return flames;
@@ -41,7 +43,7 @@ public class Bomb extends Entity {
     }
 
     public void setFlames() {
-        String[] pos = {"left", "down", "right", "top", "left_most", "down_most", "right_most", "top_most", "center" };
+        String[] pos = {"left", "down", "right", "top", "left_most", "down_most", "right_most", "top_most", "center"};
         int[] iX = {-1, 0, 1, 0};
         int[] iY = {0, 1, 0, -1};
 
@@ -115,6 +117,7 @@ public class Bomb extends Entity {
         if (!isExploded()) {
             tickingImg();
         } else {
+
             String mapz = BombermanGame.map[(int) y];
             System.out.println(mapz);
             BombermanGame.map[(int) y] = mapz.substring(0, (int) x) + " " +
@@ -126,7 +129,13 @@ public class Bomb extends Entity {
     }
 
     public void tickingImg() {
-        if (tickingCountDown == 0) {
+        if (tickingCountDown <= 0) {
+            if (!playsound) {
+                SoundEffect.mediaPlayerBombExploded.stop();
+                SoundEffect.mediaPlayerBombExploded.stop();
+                SoundEffect.sound(SoundEffect.mediaPlayerBombExploded);
+                playsound = true;
+            }
             setExploded(true);
         } else {
             this.img = Sprite
@@ -137,6 +146,7 @@ public class Bomb extends Entity {
     }
 
     public void explodingImg() {
+
         if (explosionCountDown == 0) {
             setDone(true);
             this.img = null;
@@ -185,7 +195,7 @@ public class Bomb extends Entity {
                 flames.forEach(flame -> {
                     if (flame.rtg.intersects(x.rtg.getLayoutBounds())) {
                         if (x instanceof Bomber) {
-                            ((Bomber) x).setLive(false);
+                            ((Bomber) x).setLive(((Bomber) x).getLive() - 1);
                             damagedEntities.add(x);
                         } else if (x instanceof Enemy) {
                             ((Enemy) x).setDamaged(true);
@@ -195,7 +205,7 @@ public class Bomb extends Entity {
                         // chain explosion
                         if (x instanceof Bomb) {
                             // if (((Bomb) x).getTickingCountDown() > 10)
-                                ((Bomb) x).setTickingCountDown(0);
+                            ((Bomb) x).setTickingCountDown(0);
                             ((Bomb) x).getFlames().forEach(o -> {
                                 ((Flame) o).setExplosionCountDown(15);
                             });

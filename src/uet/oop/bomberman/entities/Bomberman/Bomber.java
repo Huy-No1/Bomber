@@ -17,11 +17,11 @@ public class Bomber extends Entity {
 
     // ability
     public List<Bomb> bombList = new ArrayList<Bomb>();
-    private int bombRange = 1;
-    public int bombLimit = 1;
+    private int bombRange = 5;
+    public int bombLimit = 2;
     public double speed = 0.08;
     private int deathCountDown = 15;
-    private boolean live = true;
+    private int live = 3;
     private boolean playsound = false;
 
     /*
@@ -36,12 +36,12 @@ public class Bomber extends Entity {
         rtg = new Rectangle(x, y, 0.6875, 0.9);
     }
 
-    public void setLive(boolean live) {
-        this.live = live;
+    public int getLive() {
+        return live;
     }
 
-    public boolean isLive() {
-        return live;
+    public void setLive(int live) {
+        this.live = live;
     }
 
     public void setDeathCountDown(int deathCountDown) {
@@ -251,7 +251,7 @@ public class Bomber extends Entity {
 
     @Override
     public void update() {
-        if (live) {
+        if (live > 0) {
             if (keyInput.left && !keyInput.up && !keyInput.down) moveLeft();
             if (keyInput.right && !keyInput.up && !keyInput.down) moveRight();
             if (keyInput.up && !keyInput.right && !keyInput.left) moveUp();

@@ -267,7 +267,31 @@ public class Sprite {
             return x2;
         }
     }
-
+    public static Sprite dieBossSprite(Sprite normal, Sprite x1, Sprite x2, int animate) {
+        if (animate < 5) {
+            return normal;
+        } else if (animate < 10) {
+            return x2;
+        }
+        else if (animate < 15) {
+            return x1;
+        }
+        else if (animate < 20) {
+            return x2;
+        }
+        else if (animate < 25) {
+            return x1;
+        }
+        else if (animate < 30) {
+            return x2;
+        }
+        else if (animate < 35) {
+            return x1;
+        }
+        else {
+            return x2;
+        }
+    }
     public static Sprite bombTickingSprite(Sprite normal, Sprite x1, Sprite x2, int animate) {
         if (animate < 10) {
             return normal;
@@ -291,9 +315,9 @@ public class Sprite {
     }
 
     public static Sprite bombExplodeSprite(Sprite normal, Sprite x1, Sprite x2, int animate) {
-        if (animate < 5) {
+        if (animate < 10) {
             return normal;
-        } else if (animate < 10) {
+        } else if (animate < 25) {
             return x1;
         } else {
             return x2;

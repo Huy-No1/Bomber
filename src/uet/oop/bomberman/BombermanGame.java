@@ -6,7 +6,9 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+//import sun.tools.jstat.Scale;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.entities.Bomberman.Bomb;
 import uet.oop.bomberman.entities.Bomberman.Bomber;
@@ -24,6 +26,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Scanner;
+
 /*
     0. Tao canvas
     1. Khoi tao map:
@@ -43,7 +46,7 @@ public class BombermanGame extends Application {
     private GraphicsContext gcentity;
     private Canvas canvas;
     private Canvas canvasentity;
-    public SoundEffect soundEffect= new SoundEffect();
+    public SoundEffect soundEffect = new SoundEffect();
 
     public static List<Entity> entities = new ArrayList<>();
     public static List<Entity> finalStaticObjects = new ArrayList<>(); // contains Grass and Walls
@@ -126,7 +129,8 @@ public class BombermanGame extends Application {
                 case SPACE: {
 
                 }
-                default: {}
+                default: {
+                }
             }
         });
         scene.setOnKeyReleased(keyEvent -> {
@@ -155,7 +159,7 @@ public class BombermanGame extends Application {
                     if (bomberman instanceof Bomber && map[curY].charAt(curX) != 't') {
 
                         Bomber bomber = (Bomber) bomberman;
-                        if (bomber.isLive() && bomber.bombCounter() < bomber.bombLimit) {
+                        if (bomber.getLive() > 0 && bomber.bombCounter() < bomber.bombLimit) {
 
                             // dat bom
                             Entity bomb = bomber.placeBomb();
@@ -169,7 +173,6 @@ public class BombermanGame extends Application {
             }
         });
     }
-
 
 
     //ham khoi tao map
@@ -283,16 +286,13 @@ public class BombermanGame extends Application {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-         gcentity.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        gcentity.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         finalStaticObjects.forEach(g -> g.render(gc));
         staticObjects.forEach(g -> g.render(gc));
         entities.forEach(g -> g.render(gcentity));
         damagedEntities.forEach(g -> g.render(gc));
         flames.forEach(g -> g.render(gcentity));
     }
-
-
-
 
 
     public void updateStaticObjectsAndEnemies(Entity br) {
@@ -326,12 +326,12 @@ public class BombermanGame extends Application {
                 }
 
                 // enable bomberman to go through the tile
-                if (!(brick.getItem() instanceof Portal))  {
+                if (!(brick.getItem() instanceof Portal)) {
                     String newMap = map[(int) br.getY()];
                     map[(int) br.getY()] = newMap.substring(0, (int) br.getX()) + " " +
                             newMap.substring((int) br.getX() + 1);
-                };
-
+                }
+                ;
 
 
             } else {
@@ -388,7 +388,7 @@ public class BombermanGame extends Application {
         if (bomberman instanceof Bomber) {
             Bomber bomber = (Bomber) bomberman;
             if (bomber.collision(entities)) {
-                bomber.setLive(false);
+                bomber.setLive(bomber.getLive() - 1);
             }
         }
     }
@@ -400,15 +400,14 @@ public class BombermanGame extends Application {
             if (o instanceof Item) {
                 if (((Item) o).collision(bomberman)) {
                     SoundEffect.mediaPlayerEatItem.stop();
+                    SoundEffect.mediaPlayerEatItem.stop();
                     SoundEffect.sound(SoundEffect.mediaPlayerEatItem);
                     Bomber bomber = (Bomber) bomberman;
                     if (o instanceof SpeedItem) {
                         bomber.setSpeed(bomber.getSpeed() + 0.01);
-                    }
-                    else if (o instanceof FlameItem) {
+                    } else if (o instanceof FlameItem) {
                         bomber.setBombRange(bomber.getBombRange() + 1);
-                    }
-                    else if (o instanceof BombsItem){
+                    } else if (o instanceof BombsItem) {
                         bomber.setBombLimit(bomber.getBombLimit() + 1);
                     } else if (o instanceof Portal) {
                         newLevel = true;
@@ -424,7 +423,7 @@ public class BombermanGame extends Application {
     }
 
     void checkForNewLevel() {
-        if(newLevel == true && gameLevel < 2) {
+        if (newLevel == true && gameLevel < 2) {
             entities.clear();
             finalStaticObjects.clear();
             staticObjects.clear();
@@ -449,4 +448,5 @@ public class BombermanGame extends Application {
             });
         }
     }
+
 }

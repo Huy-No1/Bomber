@@ -23,7 +23,7 @@ public abstract class Enemy extends Entity {
 
     public Enemy(int x, int y, Image img) {
         super(x, y, img);
-        rtg = new Rectangle(x, y, 0.98, 0.98);
+        rtg = new Rectangle(x, y, 0.95, 0.95);
         damaged = false;
     }
 
