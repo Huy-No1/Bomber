@@ -27,6 +27,7 @@ public class Sprite {
      */
     public static Sprite llun = new Sprite(DEFAULT_SIZE, 5, 1, SpriteSheet.tiles, 16, 16);
 
+    public static Sprite water = new Sprite(DEFAULT_SIZE, 6, 1, SpriteSheet.tiles, 16, 16);
     public static Sprite grass = new Sprite(DEFAULT_SIZE, 6, 0, SpriteSheet.tiles, 16, 16);
     public static Sprite brick = new Sprite(DEFAULT_SIZE, 7, 0, SpriteSheet.tiles, 16, 16);
     public static Sprite wall = new Sprite(DEFAULT_SIZE, 5, 0, SpriteSheet.tiles, 16, 16);

@@ -15,7 +15,7 @@ public class SoundEffect extends Application{
     public static MediaPlayer mediaPlayerbacksound = new MediaPlayer(mediaBackSound);
 
     //EatItem
-    public static Media mediaEatItem = new Media(new File("src\\Sound\\eatItem.wav")
+    public static Media mediaEatItem = new Media(new File("src\\Sound\\19.wav")
             .toURI().toString());
     public static MediaPlayer mediaPlayerEatItem = new MediaPlayer(mediaEatItem);
 

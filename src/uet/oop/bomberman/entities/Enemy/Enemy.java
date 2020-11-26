@@ -41,6 +41,7 @@ public abstract class Enemy extends Entity {
             if (!throughWall) {
                 if (BombermanGame.map[(int) y].charAt((int) x + 1) != '*' &&
                         BombermanGame.map[(int) y].charAt((int) x + 1) != '#' &&
+                        BombermanGame.map[(int) y].charAt((int) x + 1) != 'w' &&
                         BombermanGame.map[(int) y].charAt((int) x + 1) != 't') {
                     x = (double) Math.round((x + speed) * 1000) / 1000;
                     setLocation(x, y);
@@ -68,6 +69,7 @@ public abstract class Enemy extends Entity {
             if (!throughWall) {
                 if (BombermanGame.map[(int) y].charAt((int) x - 1) != '*' &&
                         BombermanGame.map[(int) y].charAt((int) x - 1) != '#' &&
+                        BombermanGame.map[(int) y].charAt((int) x - 1) != 'w' &&
                         BombermanGame.map[(int) y].charAt((int) x - 1) != 't') {
                     x = (double) Math.round((x - speed) * 1000) / 1000;
                     setLocation(x, y);
@@ -95,6 +97,7 @@ public abstract class Enemy extends Entity {
             if (!throughWall) {
                 if (BombermanGame.map[(int) y - 1].charAt((int) x) != '*' &&
                         BombermanGame.map[(int) y - 1].charAt((int) x) != '#' &&
+                        BombermanGame.map[(int) y - 1].charAt((int) x) != 'w' &&
                         BombermanGame.map[(int) y - 1].charAt((int) x) != 't') {
                     y = (double) Math.round((y - speed) * 1000) / 1000;
                     setLocation(x, y);
@@ -122,6 +125,7 @@ public abstract class Enemy extends Entity {
             if (!throughWall) {
                 if (BombermanGame.map[(int) y + 1].charAt((int) x) != '*' &&
                         BombermanGame.map[(int) y + 1].charAt((int) x) != '#' &&
+                        BombermanGame.map[(int) y + 1].charAt((int) x) != 'w' &&
                         BombermanGame.map[(int) y + 1].charAt((int) x) != 't') {
                     y = (double) Math.round((y + speed) * 1000) / 1000;
                     setLocation(x, y);

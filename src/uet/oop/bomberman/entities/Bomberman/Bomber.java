@@ -113,7 +113,8 @@ public class Bomber extends Entity {
                 return false;
             } else if (BombermanGame.map[y1].charAt(x1 - 1) != '#' &&
                     BombermanGame.map[y1].charAt(x1 - 1) != '*' &&
-                    BombermanGame.map[y1].charAt(x1 - 1) != 't') {
+                    BombermanGame.map[y1].charAt(x1 - 1) != 't' &&
+            BombermanGame.map[y1].charAt(x1 - 1) != 'w') {
                 y = y1;
                 x = x - speed;
                 setLocation(x, y);
@@ -144,7 +145,8 @@ public class Bomber extends Entity {
                 return false;
             } else if (BombermanGame.map[y1].charAt(x1) != '#' &&
                     BombermanGame.map[y1].charAt(x1) != '*' &&
-                    BombermanGame.map[y1].charAt(x1) != 't') {
+                    BombermanGame.map[y1].charAt(x1) != 't' &&
+                    BombermanGame.map[y1].charAt(x1) != 'w') {
                 y = y1;
                 x = x + speed;
                 setLocation(x, y);
@@ -175,7 +177,8 @@ public class Bomber extends Entity {
                 return false;
             } else if (BombermanGame.map[y1 - 1].charAt(x1) != '#' &&
                     BombermanGame.map[y1 - 1].charAt(x1) != '*' &&
-                    BombermanGame.map[y1 - 1].charAt(x1) != 't') {
+                    BombermanGame.map[y1 - 1].charAt(x1) != 't'
+                    && BombermanGame.map[y1 - 1].charAt(x1) != 'w') {
                 double x_ = x - Math.floor(x);
                 if (x_ <= 0.3 && x_ >= 0.1) x = x1 + 0.24;
                 else if ((x_ >= 0.7)) x = x1;
@@ -210,7 +213,8 @@ public class Bomber extends Entity {
                 return false;
             } else if (BombermanGame.map[y1].charAt(x1) != '#' &&
                     BombermanGame.map[y1].charAt(x1) != '*' &&
-                    BombermanGame.map[y1].charAt(x1) != 't') {
+                    BombermanGame.map[y1].charAt(x1) != 't' &&
+                    BombermanGame.map[y1].charAt(x1) != 'w'){
                 double x_ = x - Math.floor(x);
                 if (x_ <= 0.3 && x_ >= 0.1) x = x1 + 0.24;
                 else if ((x_ >= 0.7)) x = x1;

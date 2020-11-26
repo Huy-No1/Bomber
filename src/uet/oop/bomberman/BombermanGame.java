@@ -14,10 +14,7 @@ import uet.oop.bomberman.entities.Bomberman.Bomb;
 import uet.oop.bomberman.entities.Bomberman.Bomber;
 import uet.oop.bomberman.entities.Enemy.*;
 import uet.oop.bomberman.entities.Item.*;
-import uet.oop.bomberman.entities.NeutralObject.Brick;
-import uet.oop.bomberman.entities.NeutralObject.Flame;
-import uet.oop.bomberman.entities.NeutralObject.Grass;
-import uet.oop.bomberman.entities.NeutralObject.Wall;
+import uet.oop.bomberman.entities.NeutralObject.*;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.io.BufferedReader;
@@ -203,6 +200,10 @@ public class BombermanGame extends Application {
                             finalStaticObjects.add(new Grass(j, i, Sprite.grass.getFxImage()));
                             object = new Brick(j, i, Sprite.brick.getFxImage());
                             staticObjects.add(object);
+                            break;
+                        }
+                        case 'w': {
+                            finalStaticObjects.add(new Water(j, i, Sprite.water.getFxImage()));
                             break;
                         }
                         case '1': {
